@@ -1,5 +1,7 @@
-﻿using DocumentAPI.Interfaces;
+﻿using DocumentAPI.Controllers.DTOs;
+using DocumentAPI.Interfaces;
 using DocumentAPI.Models;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace DocumentAPI.Services
@@ -23,10 +25,17 @@ namespace DocumentAPI.Services
             return await _context.ProductEntities.FindAsync(id);
         }
 
-        public async Task AddAsync(ProductEntity product)
+        public async Task<ProductEntity> AddAsync(ProductDto product)
         {
-            _context.ProductEntities.Add(product);
+            var newProduct = new ProductEntity
+            {
+                Name = product.Name,
+                Description = product.Description,
+                Price = product.Price,
+            };
+            _context.ProductEntities.Add(newProduct);
             await _context.SaveChangesAsync();
+            return newProduct;
         }
 
         public async Task<bool> DeleteAsync(int id)
@@ -37,6 +46,13 @@ namespace DocumentAPI.Services
             _context.ProductEntities.Remove(product);
             await _context.SaveChangesAsync();
             return true;
+        }
+
+        public async Task<List<ProductEntity>> SearchAsync(string name)
+        {
+            var products = await _context.ProductEntities
+                            .Where(p => p.Name.Contains(name)).ToListAsync();
+            return products;
         }
     }
 }

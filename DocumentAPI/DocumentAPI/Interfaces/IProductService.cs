@@ -1,4 +1,5 @@
 ﻿
+using DocumentAPI.Controllers.DTOs;
 using DocumentAPI.Models;
 
 namespace DocumentAPI.Interfaces
@@ -7,7 +8,8 @@ namespace DocumentAPI.Interfaces
     {
         Task<List<ProductEntity>> GetAllAsync();
         Task<ProductEntity?> GetByIdAsync(int id);
-        Task AddAsync(ProductEntity product);
+        Task<ProductEntity> AddAsync(ProductDto product);
         Task<bool> DeleteAsync(int id);
+        Task<List<ProductEntity>> SearchAsync(string name);
     }
 }
