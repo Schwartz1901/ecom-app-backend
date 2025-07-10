@@ -7,6 +7,7 @@ namespace AuthService.Data
     public class AuthDbContext : IdentityDbContext<UserEntity>
     {
         public AuthDbContext(DbContextOptions<AuthDbContext> options): base(options) {
-        }    
+        }
+        public DbSet<RoleEntity> Roles { get; set; }
     }
 }
