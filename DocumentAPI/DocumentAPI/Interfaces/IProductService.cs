@@ -11,5 +11,6 @@ namespace DocumentAPI.Interfaces
         Task<ProductEntity> AddAsync(ProductDto product);
         Task<bool> DeleteAsync(int id);
         Task<List<ProductEntity>> SearchAsync(string name);
+        Task<ProductEntity> UpdateAsync(int id, ProductDto product);
     }
 }

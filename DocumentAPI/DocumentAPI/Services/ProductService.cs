@@ -25,13 +25,26 @@ namespace DocumentAPI.Services
             return await _context.ProductEntities.FindAsync(id);
         }
 
-        public async Task<ProductEntity> AddAsync(ProductDto product)
+        public async Task<ProductEntity> AddAsync(ProductDto productDto)
         {
+            if (string.IsNullOrWhiteSpace(productDto.Name))
+            {
+                throw new ArgumentException("Product name is required!");
+            }
+            if (productDto.Price < 0)
+            {
+                throw new ArgumentException("Product price must be greater than or equal to 0");
+            }
+            // For testing purpose, to be removed later
+            if (productDto.Price >= 100)
+            {
+                throw new ArgumentException("Too Expensive!!!!");
+            }
             var newProduct = new ProductEntity
             {
-                Name = product.Name,
-                Description = product.Description,
-                Price = product.Price,
+                Name = productDto.Name,
+                Description = productDto.Description,
+                Price = productDto.Price,
             };
             _context.ProductEntities.Add(newProduct);
             await _context.SaveChangesAsync();
@@ -54,5 +67,22 @@ namespace DocumentAPI.Services
                             .Where(p => p.Name.Contains(name)).ToListAsync();
             return products;
         }
+
+        public async Task<ProductEntity> UpdateAsync(int id, ProductDto productDto)
+        {
+            var product = await _context.ProductEntities.FindAsync(id);
+            if (product == null)
+            {
+                return null;
+            }
+            product.Name= productDto.Name;
+            product.Description= productDto.Description;
+            product.Price= productDto.Price;
+
+            await _context.SaveChangesAsync();
+            return product;
+        }
+
+        
     }
 }

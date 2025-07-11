@@ -1,10 +1,12 @@
 using DocumentAPI.Interfaces;
 using DocumentAPI.Models;
 using DocumentAPI.Services;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
-
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 // Add services to the container.
 
 builder.Services.AddControllers();
@@ -13,6 +15,15 @@ builder.Services.AddOpenApi();
 // DI
 builder.Services.AddDbContext<DocumentDbContext>(opt => opt.UseInMemoryDatabase("DocumentDb"));
 builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policy =>
+    {
+        policy.WithOrigins("http://localhost:4200") // Angular dev port
+              .AllowAnyMethod()
+              .AllowAnyHeader();
+    });
+});
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -20,7 +31,35 @@ if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
+app.UseExceptionHandler(appBuilder =>
+{
+    appBuilder.Run(async context =>
+    {
+        var exceptionHandler = context.Features.Get<IExceptionHandlerFeature>();
+        var exception = exceptionHandler?.Error;
 
+        context.Response.ContentType = "application/json";
+        context.Response.StatusCode = exception switch
+        {
+            // Status code mapping
+            ArgumentException => StatusCodes.Status400BadRequest,
+            KeyNotFoundException => StatusCodes.Status404NotFound,
+            _ => StatusCodes.Status500InternalServerError
+        };
+
+        var response = new
+        {
+            status = context.Response.StatusCode,
+            message = exception?.Message
+        };
+
+        await context.Response.WriteAsJsonAsync(response);
+    });
+});
+
+app.UseSwagger(); // JSON output
+app.UseSwaggerUI(); // Interactive UI
+app.UseCors();
 app.UseHttpsRedirection();
 
 app.UseAuthorization();

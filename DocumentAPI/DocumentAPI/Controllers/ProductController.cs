@@ -25,12 +25,21 @@ namespace DocumentAPI.Controllers
         // GET api/Product/{id}
         public async Task<IActionResult> GetById([FromRoute] int id)
         {
-            //Validation
-            if (id <= 0)
-                return BadRequest("ID must be greater than 0");
-            var product = await _productService.GetByIdAsync(id);
+            try
+            {
+                var product = await _productService.GetByIdAsync(id);
+                return Ok(product);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { error = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new {error="Internal Server Error: " + ex.Message});
+            }
+
             
-            return Ok(product);
         }
         [HttpGet("search")]
         // GET api/Product/search?name={name}
@@ -43,12 +52,9 @@ namespace DocumentAPI.Controllers
         }
         [HttpPost]
         // POST api/Product 
-        public async Task<IActionResult> Create([FromBody]ProductDto product)
+        public async Task<IActionResult> Create([FromBody] ProductDto product)
         {
-            if (product == null)
-            {
-                return BadRequest("Unknow product!");
-            }
+
             var created = await _productService.AddAsync(product);
 
             return CreatedAtAction(
@@ -56,6 +62,40 @@ namespace DocumentAPI.Controllers
                 new { id = created.Id },
                 created
             );
+
+        }
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Update([FromRoute] int id, [FromBody] ProductDto productDto)
+        {
+            if (productDto == null)
+            {
+                return BadRequest("Unknown product!");
+            }
+            if (id <= 0)
+            {
+                return BadRequest("Invalid Id number!");
+            }
+            var product = await _productService.UpdateAsync(id, productDto);
+            if (product == null)
+            {
+                return NotFound("Cannot find product with Id " + id);
+            }
+            return Ok(product);
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete([FromRoute] int id)
+        {
+            if (id <= 0)
+            {
+                return BadRequest("Invalid Id");
+            }
+            var isDelete = await _productService.DeleteAsync(id);
+            if (!isDelete)
+            {
+                return NotFound("Cannot find product with Id " + id);
+            }
+            return Ok("Product deleted.");
         }
     }
 }
