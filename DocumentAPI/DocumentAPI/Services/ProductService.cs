@@ -22,6 +22,7 @@ namespace DocumentAPI.Services
 
         public async Task<ProductEntity?> GetByIdAsync(int id)
         {
+            if (id < 0) throw new ArgumentException("Invalid Id");
             return await _context.ProductEntities.FindAsync(id);
         }
 
@@ -63,6 +64,8 @@ namespace DocumentAPI.Services
 
         public async Task<List<ProductEntity>> SearchAsync(string name)
         {
+            if (string.IsNullOrWhiteSpace(name) || name.Length < 2)
+                throw new ArgumentException("Length of name must be greater than 2");
             var products = await _context.ProductEntities
                             .Where(p => p.Name.Contains(name)).ToListAsync();
             return products;
@@ -70,10 +73,18 @@ namespace DocumentAPI.Services
 
         public async Task<ProductEntity> UpdateAsync(int id, ProductDto productDto)
         {
+            if (productDto == null)
+            {
+                throw new ArgumentNullException(nameof(productDto), "Unknown product!");
+            }
+            if (id <= 0)
+            {
+                throw new ArgumentException(nameof(id), "Invalid ID number!");
+            }
             var product = await _context.ProductEntities.FindAsync(id);
             if (product == null)
             {
-                return null;
+                throw new KeyNotFoundException($"Product with ID {id} was not found.");
             }
             product.Name= productDto.Name;
             product.Description= productDto.Description;

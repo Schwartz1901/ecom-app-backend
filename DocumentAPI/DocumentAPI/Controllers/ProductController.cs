@@ -25,28 +25,16 @@ namespace DocumentAPI.Controllers
         // GET api/Product/{id}
         public async Task<IActionResult> GetById([FromRoute] int id)
         {
-            try
-            {
+            
                 var product = await _productService.GetByIdAsync(id);
                 return Ok(product);
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(new { error = ex.Message });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new {error="Internal Server Error: " + ex.Message});
-            }
-
             
         }
         [HttpGet("search")]
         // GET api/Product/search?name={name}
         public async Task<IActionResult> Search([FromQuery] string name)
         {
-            if (string.IsNullOrWhiteSpace(name) || name.Length < 2)
-                return BadRequest("Search keyword must be at least 2 characters.");
+        
             var products = await _productService.SearchAsync(name);
             return Ok(products);
         }
@@ -67,14 +55,7 @@ namespace DocumentAPI.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Update([FromRoute] int id, [FromBody] ProductDto productDto)
         {
-            if (productDto == null)
-            {
-                return BadRequest("Unknown product!");
-            }
-            if (id <= 0)
-            {
-                return BadRequest("Invalid Id number!");
-            }
+           
             var product = await _productService.UpdateAsync(id, productDto);
             if (product == null)
             {

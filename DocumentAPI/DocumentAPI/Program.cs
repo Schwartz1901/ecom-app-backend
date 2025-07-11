@@ -43,6 +43,7 @@ app.UseExceptionHandler(appBuilder =>
         {
             // Status code mapping
             ArgumentException => StatusCodes.Status400BadRequest,
+
             KeyNotFoundException => StatusCodes.Status404NotFound,
             _ => StatusCodes.Status500InternalServerError
         };
