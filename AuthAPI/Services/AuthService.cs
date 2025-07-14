@@ -86,7 +86,20 @@ namespace AuthAPI.Services
                 Email = user.Email
             };
         }
+        public async Task LogoutAsync(string userId)
+        {
+            var tokens = await _context.RefreshTokens
+                .Where(t => t.UserId == userId && !t.IsRevoked && t.ExpiryDate > DateTime.UtcNow)
+                .ToListAsync();
 
+            foreach (var token in tokens)
+            {
+                token.IsRevoked = true;
+            }
+
+            await _context.SaveChangesAsync();
+
+        }
         private string GenerateAccessToken(ApplicationUser user)
         {
             var claims = new[]
@@ -104,7 +117,7 @@ namespace AuthAPI.Services
                 _config["Jwt:Issuer"],
                 _config["Jwt:Audience"],
                 claims,
-                expires: DateTime.UtcNow.AddMinutes(30),
+                expires: DateTime.UtcNow.AddHours(1),
                 signingCredentials: creds
             );
 
@@ -119,7 +132,7 @@ namespace AuthAPI.Services
             {
                 Token = refreshToken,
                 UserId = user.Id,
-                ExpiryDate = DateTime.UtcNow.AddDays(7)
+                ExpiryDate = DateTime.UtcNow.AddMinutes(15)
             });
 
             await _context.SaveChangesAsync();

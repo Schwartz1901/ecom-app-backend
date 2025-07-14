@@ -1,7 +1,8 @@
 ﻿using AuthAPI.Controllers.Dtos;
 using AuthAPI.Interfaces;
-
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace AuthAPI.Controllers
 {
@@ -48,6 +49,31 @@ namespace AuthAPI.Controllers
             {
                 return Unauthorized(new { message = ex.Message });
             }
+        }
+        [HttpPost("refresh")]
+        public async Task<IActionResult> Refresh(string refreshToken)
+        {
+            try
+            {
+                var response = _authService.RefreshTokenAsync(refreshToken);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
+        }
+
+        [Authorize]
+        [HttpPost("logout")]
+        public async Task<IActionResult> Logout()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userId))
+                return Unauthorized();
+
+            await _authService.LogoutAsync(userId);
+            return Ok(new { message = "Logged out successfully." });
         }
     }
 }
