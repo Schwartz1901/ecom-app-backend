@@ -2,9 +2,11 @@
 using AuthAPI.Interfaces;
 using AuthAPI.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace AuthAPI.Services
@@ -14,59 +16,91 @@ namespace AuthAPI.Services
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IConfiguration _config;
-        public AuthService(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IConfiguration config)
+        private readonly ApplicationDbContext _context;
+
+        public AuthService(
+            UserManager<ApplicationUser> userManager,
+            SignInManager<ApplicationUser> signInManager,
+            IConfiguration config,
+            ApplicationDbContext context)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _config = config;
+            _context = context;
         }
-        public async Task<AuthResponseDto> RegisterAsync(RegisterDto registerDto)
+
+        public async Task<AuthResponseDto> RegisterAsync(RegisterDto dto)
         {
             var newUser = new ApplicationUser
             {
-                UserName = registerDto.Username,
-                Email = registerDto.Email
+                UserName = dto.Username,
+                Email = dto.Email
             };
-            var result = await _userManager.CreateAsync(newUser, registerDto.Password);
+
+            var result = await _userManager.CreateAsync(newUser, dto.Password);
             if (!result.Succeeded)
-            {
                 throw new Exception(string.Join("; ", result.Errors.Select(e => e.Description)));
-            }
-            return await GenerateJwtToken(newUser);
 
+            return await GenerateTokensAsync(newUser);
         }
 
-        public async Task<AuthResponseDto> LoginAsync(LoginDto loginDto)
+        public async Task<AuthResponseDto> LoginAsync(LoginDto dto)
         {
-            var user = await _userManager.FindByEmailAsync(loginDto.Email);
+            var user = await _userManager.FindByEmailAsync(dto.Email);
             if (user == null)
-            {
-                throw new Exception("Invalid Email or Password");
-            }
-            var result = await _signInManager.CheckPasswordSignInAsync(user, loginDto.Password, false);
-            if (!result.Succeeded)
-            {
-                throw new Exception("Invalid Email or Passowrd");
-            }
+                throw new Exception("Invalid email or password");
 
-            return await GenerateJwtToken(user);
+            var result = await _signInManager.CheckPasswordSignInAsync(user, dto.Password, false);
+            if (!result.Succeeded)
+                throw new Exception("Invalid email or password");
+
+            return await GenerateTokensAsync(user);
         }
 
-        private async Task<AuthResponseDto> GenerateJwtToken(ApplicationUser user)
+        public async Task<AuthResponseDto> RefreshTokenAsync(string refreshToken)
+        {
+            var tokenEntity = await _context.RefreshTokens
+                .Include(r => r.User)
+                .FirstOrDefaultAsync(r => r.Token == refreshToken && r.ExpiryDate > DateTime.UtcNow);
+
+            if (tokenEntity == null)
+                throw new Exception("Invalid or expired refresh token");
+
+            return await GenerateTokensAsync(tokenEntity.User, true);
+        }
+
+        private async Task<AuthResponseDto> GenerateTokensAsync(ApplicationUser user, bool isRefreshFlow = false)
+        {
+            var accessToken = GenerateAccessToken(user);
+            string refreshToken = isRefreshFlow
+                ? await ReuseOrRenewRefreshToken(user)
+                : await SaveNewRefreshToken(user);
+
+            return new AuthResponseDto
+            {
+                Token = accessToken,
+                RefreshToken = refreshToken,
+                UserId = user.Id,
+                Username = user.UserName,
+                Email = user.Email
+            };
+        }
+
+        private string GenerateAccessToken(ApplicationUser user)
         {
             var claims = new[]
             {
-                new Claim(ClaimTypes.NameIdentifier, user.Id),
+                new Claim(JwtRegisteredClaimNames.Sub, user.Id),
                 new Claim("username", user.UserName),
                 new Claim(JwtRegisteredClaimNames.Email, user.Email),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:key"]));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-            var token = new JwtSecurityToken
-            (
+            var token = new JwtSecurityToken(
                 _config["Jwt:Issuer"],
                 _config["Jwt:Audience"],
                 claims,
@@ -74,13 +108,43 @@ namespace AuthAPI.Services
                 signingCredentials: creds
             );
 
-            return new AuthResponseDto
+            return new JwtSecurityTokenHandler().WriteToken(token);
+        }
+
+        private async Task<string> SaveNewRefreshToken(ApplicationUser user)
+        {
+            var refreshToken = GenerateRefreshToken();
+
+            _context.RefreshTokens.Add(new RefreshToken
             {
-                Token = new JwtSecurityTokenHandler().WriteToken(token),
+                Token = refreshToken,
                 UserId = user.Id,
-                Username = user.UserName,
-                Email = user.Email
-            };
+                ExpiryDate = DateTime.UtcNow.AddDays(7)
+            });
+
+            await _context.SaveChangesAsync();
+            return refreshToken;
+        }
+
+        private async Task<string> ReuseOrRenewRefreshToken(ApplicationUser user)
+        {
+            var existing = await _context.RefreshTokens
+                .Where(rt => rt.UserId == user.Id && rt.ExpiryDate > DateTime.UtcNow)
+                .OrderByDescending(rt => rt.ExpiryDate)
+                .FirstOrDefaultAsync();
+
+            if (existing != null)
+                return existing.Token;
+
+            return await SaveNewRefreshToken(user);
+        }
+
+        private string GenerateRefreshToken()
+        {
+            var bytes = new byte[64];
+            using var rng = RandomNumberGenerator.Create();
+            rng.GetBytes(bytes);
+            return Convert.ToBase64String(bytes);
         }
     }
 }
