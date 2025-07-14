@@ -15,12 +15,18 @@ namespace AuthAPI.Controllers
         { 
             _authService = authService;
         }
+        [HttpGet("hello")]
+        public ActionResult Hello()
+        {
+            return Ok("hello");
+        }
+
         [HttpPost("register")]
         public async Task<IActionResult> Register(RegisterDto registerDto)
         {
             try
             {
-                var response = _authService.RegisterAsync(registerDto);
+                var response = await _authService.RegisterAsync(registerDto);
                 return Ok(response);
             }
             catch (Exception ex)
@@ -34,7 +40,7 @@ namespace AuthAPI.Controllers
         {
             try
             {
-                var response = _authService.LoginAsync(loginDto);
+                var response = await _authService.LoginAsync(loginDto);
 
                 return Ok(response);
             }
