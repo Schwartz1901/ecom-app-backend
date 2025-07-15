@@ -14,6 +14,11 @@ namespace DocumentAPI.Controllers
         {
             _productService = productService;
         }
+        [HttpGet("hello")]
+        public ActionResult Hello()
+        {
+            return Ok("Hello");
+        }
         [HttpGet]
         // GET api/Product/
         public async Task<IActionResult> GetAll()
