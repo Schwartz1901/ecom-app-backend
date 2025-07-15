@@ -7,6 +7,6 @@ namespace AuthAPI.Interfaces
         Task<AuthResponseDto> RegisterAsync(RegisterDto registerDto);
         Task<AuthResponseDto> LoginAsync(LoginDto loginDto);
         Task<AuthResponseDto> RefreshTokenAsync(string refreshToken);
-        Task LogoutAsync(string userId);
+        Task<bool> LogoutAsync(string refreshToken);
     }
 }

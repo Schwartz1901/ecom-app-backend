@@ -1,5 +1,6 @@
 ﻿using AuthAPI.Controllers.Dtos;
 using AuthAPI.Interfaces;
+using Azure.Core;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -50,12 +51,13 @@ namespace AuthAPI.Controllers
                 return Unauthorized(new { message = ex.Message });
             }
         }
-        [HttpPost("refresh")]
-        public async Task<IActionResult> Refresh(string refreshToken)
+        [HttpPost("refresh/{refreshToken}")]
+        public async Task<IActionResult> Refresh([FromRoute]string refreshToken)
         {
+            
             try
             {
-                var response = _authService.RefreshTokenAsync(refreshToken);
+                var response = await _authService.RefreshTokenAsync(refreshToken);
                 return Ok(response);
             }
             catch (Exception ex)
@@ -64,16 +66,20 @@ namespace AuthAPI.Controllers
             }
         }
 
-        [Authorize]
+       
         [HttpPost("logout")]
-        public async Task<IActionResult> Logout()
+        public async Task<IActionResult> Logout([FromBody] LogoutDto logoutDto)
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (string.IsNullOrEmpty(userId))
-                return Unauthorized();
+            try
+            {
+                var response = await _authService.LogoutAsync(logoutDto.RefreshToken);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new {message = ex.Message});
+            }
 
-            await _authService.LogoutAsync(userId);
-            return Ok(new { message = "Logged out successfully." });
         }
     }
 }

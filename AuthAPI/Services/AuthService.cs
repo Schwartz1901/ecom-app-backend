@@ -62,7 +62,7 @@ namespace AuthAPI.Services
         {
             var tokenEntity = await _context.RefreshTokens
                 .Include(r => r.User)
-                .FirstOrDefaultAsync(r => r.Token == refreshToken && r.ExpiryDate > DateTime.UtcNow);
+                .FirstOrDefaultAsync(r => r.Token == refreshToken && r.IsActive);
 
             if (tokenEntity == null)
                 throw new Exception("Invalid or expired refresh token");
@@ -86,18 +86,21 @@ namespace AuthAPI.Services
                 Email = user.Email
             };
         }
-        public async Task LogoutAsync(string userId)
+        public async Task<bool> LogoutAsync(string refreshToken)
         {
-            var tokens = await _context.RefreshTokens
-                .Where(t => t.UserId == userId && !t.IsRevoked && t.ExpiryDate > DateTime.UtcNow)
-                .ToListAsync();
-
-            foreach (var token in tokens)
+            if (string.IsNullOrEmpty(refreshToken))
             {
-                token.IsRevoked = true;
+                throw new Exception("Invalid");
             }
+            var token = await _context.RefreshTokens.FirstOrDefaultAsync(t => t.Token == refreshToken);
+            if (token == null)
+                return false;
 
+            token.IsRevoked = true;
+            
+            _context.RefreshTokens.Update(token);
             await _context.SaveChangesAsync();
+            return true;
 
         }
         private string GenerateAccessToken(ApplicationUser user)
@@ -117,7 +120,7 @@ namespace AuthAPI.Services
                 _config["Jwt:Issuer"],
                 _config["Jwt:Audience"],
                 claims,
-                expires: DateTime.UtcNow.AddHours(1),
+                expires: DateTime.UtcNow.AddMinutes(15),
                 signingCredentials: creds
             );
 
@@ -132,7 +135,7 @@ namespace AuthAPI.Services
             {
                 Token = refreshToken,
                 UserId = user.Id,
-                ExpiryDate = DateTime.UtcNow.AddMinutes(15)
+                ExpiryDate = DateTime.UtcNow.AddDays(1)
             });
 
             await _context.SaveChangesAsync();
@@ -159,5 +162,7 @@ namespace AuthAPI.Services
             rng.GetBytes(bytes);
             return Convert.ToBase64String(bytes);
         }
+
+        
     }
 }
