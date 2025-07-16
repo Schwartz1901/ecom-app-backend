@@ -81,5 +81,26 @@ namespace AuthAPI.Controllers
             }
 
         }
+        [HttpDelete("delete/{userId}")]
+        public async Task<IActionResult> DeleteUser([FromRoute] string userId)
+        {
+            try
+            {
+                var result = await _authService.DeleteUserAsync(userId);
+                return Ok(result);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = "Failed to delete user" });
+            }
+        }
     }
 }

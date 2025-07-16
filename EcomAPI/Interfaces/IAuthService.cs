@@ -8,5 +8,7 @@ namespace AuthAPI.Interfaces
         Task<AuthResponseDto> LoginAsync(LoginDto loginDto);
         Task<AuthResponseDto> RefreshTokenAsync(string refreshToken);
         Task<bool> LogoutAsync(string refreshToken);
+
+        Task<bool> DeleteUserAsync(string userId);
     }
 }

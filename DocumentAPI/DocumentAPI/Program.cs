@@ -41,7 +41,7 @@ app.UseExceptionHandler(appBuilder =>
         context.Response.ContentType = "application/json";
         context.Response.StatusCode = exception switch
         {
-            // Status code mapping
+            // Mapping from Exception to HttpSatusCode
             ArgumentException => StatusCodes.Status400BadRequest,
 
             KeyNotFoundException => StatusCodes.Status404NotFound,
@@ -58,8 +58,8 @@ app.UseExceptionHandler(appBuilder =>
     });
 });
 
-app.UseSwagger(); // JSON output
-app.UseSwaggerUI(); // Interactive UI
+app.UseSwagger(); 
+app.UseSwaggerUI();
 app.UseCors();
 app.UseHttpsRedirection();
 

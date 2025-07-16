@@ -2,6 +2,8 @@ using AuthAPI;
 using AuthAPI.Interfaces;
 using AuthAPI.Models;
 using AuthAPI.Services;
+using EcomAPI.Interfaces;
+using EcomAPI.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -32,7 +34,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
                     };
                 });
-
+builder.Services.AddScoped<IUserService, UserService>();
 
 // Add Authorization
 builder.Services.AddAuthorization();

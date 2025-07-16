@@ -1,6 +1,9 @@
 ﻿using AuthAPI.Controllers.Dtos;
 using AuthAPI.Interfaces;
 using AuthAPI.Models;
+using EcomAPI.Interfaces;
+using EcomAPI.Services;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -17,17 +20,21 @@ namespace AuthAPI.Services
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IConfiguration _config;
         private readonly ApplicationDbContext _context;
+        private readonly IUserService _userService;
 
         public AuthService(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
             IConfiguration config,
-            ApplicationDbContext context)
+            ApplicationDbContext context,
+            IUserService userService
+            )
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _config = config;
             _context = context;
+            _userService = userService;
         }
 
         public async Task<AuthResponseDto> RegisterAsync(RegisterDto dto)
@@ -42,6 +49,8 @@ namespace AuthAPI.Services
             if (!result.Succeeded)
                 throw new Exception(string.Join("; ", result.Errors.Select(e => e.Description)));
 
+            await _userService.PostUserAsync(newUser);
+            
             return await GenerateTokensAsync(newUser);
         }
 
@@ -163,6 +172,24 @@ namespace AuthAPI.Services
             return Convert.ToBase64String(bytes);
         }
 
+        public async Task<bool> DeleteUserAsync(string userId)
+        {
+            if (string.IsNullOrEmpty(userId))
+            {
+                throw new ArgumentException("invalid userId");
+            }
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                throw new KeyNotFoundException("Cannot find user");
+            }
+            var result = await _userManager.DeleteAsync(user);
+            if (!result.Succeeded)
+            {
+                throw new Exception("Cannot delete user");
+            }
+            return result.Succeeded;
+        }
         
     }
 }

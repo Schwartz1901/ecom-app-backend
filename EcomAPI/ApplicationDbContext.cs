@@ -1,5 +1,5 @@
 ﻿using AuthAPI.Models;
-
+using EcomAPI.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,5 +12,7 @@ namespace AuthAPI
 
         }
         public DbSet<RefreshToken> RefreshTokens { get; set; }
+        public DbSet<UserProfile> UserProfiles { get; set; }
+        public DbSet<Address> Addresses { get; set; }
     }
 }

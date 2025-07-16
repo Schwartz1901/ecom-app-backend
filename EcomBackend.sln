@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DocumentAPI", "DocumentAPI\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AuthAPI", "AuthAPI\AuthAPI.csproj", "{A60102B1-F3C0-45AF-829D-4A15C7A75794}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EcomAPI", "EcomAPI\EcomAPI.csproj", "{19E59A39-3F1D-47EA-854F-138C044BBA4A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -43,6 +45,18 @@ Global
 		{A60102B1-F3C0-45AF-829D-4A15C7A75794}.Release|x64.Build.0 = Release|Any CPU
 		{A60102B1-F3C0-45AF-829D-4A15C7A75794}.Release|x86.ActiveCfg = Release|Any CPU
 		{A60102B1-F3C0-45AF-829D-4A15C7A75794}.Release|x86.Build.0 = Release|Any CPU
+		{19E59A39-3F1D-47EA-854F-138C044BBA4A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{19E59A39-3F1D-47EA-854F-138C044BBA4A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{19E59A39-3F1D-47EA-854F-138C044BBA4A}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{19E59A39-3F1D-47EA-854F-138C044BBA4A}.Debug|x64.Build.0 = Debug|Any CPU
+		{19E59A39-3F1D-47EA-854F-138C044BBA4A}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{19E59A39-3F1D-47EA-854F-138C044BBA4A}.Debug|x86.Build.0 = Debug|Any CPU
+		{19E59A39-3F1D-47EA-854F-138C044BBA4A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{19E59A39-3F1D-47EA-854F-138C044BBA4A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{19E59A39-3F1D-47EA-854F-138C044BBA4A}.Release|x64.ActiveCfg = Release|Any CPU
+		{19E59A39-3F1D-47EA-854F-138C044BBA4A}.Release|x64.Build.0 = Release|Any CPU
+		{19E59A39-3F1D-47EA-854F-138C044BBA4A}.Release|x86.ActiveCfg = Release|Any CPU
+		{19E59A39-3F1D-47EA-854F-138C044BBA4A}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
