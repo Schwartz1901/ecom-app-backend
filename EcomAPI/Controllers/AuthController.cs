@@ -1,7 +1,9 @@
 ﻿using AuthAPI.Controllers.Dtos;
 using AuthAPI.Interfaces;
-
+using Azure.Core;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace AuthAPI.Controllers
 {
@@ -15,12 +17,18 @@ namespace AuthAPI.Controllers
         { 
             _authService = authService;
         }
+        [HttpGet("hello")]
+        public ActionResult Hello()
+        {
+            return Ok("hello");
+        }
+
         [HttpPost("register")]
         public async Task<IActionResult> Register(RegisterDto registerDto)
         {
             try
             {
-                var response = _authService.RegisterAsync(registerDto);
+                var response = await _authService.RegisterAsync(registerDto);
                 return Ok(response);
             }
             catch (Exception ex)
@@ -34,7 +42,7 @@ namespace AuthAPI.Controllers
         {
             try
             {
-                var response = _authService.LoginAsync(loginDto);
+                var response = await _authService.LoginAsync(loginDto);
 
                 return Ok(response);
             }
@@ -42,6 +50,36 @@ namespace AuthAPI.Controllers
             {
                 return Unauthorized(new { message = ex.Message });
             }
+        }
+        [HttpPost("refresh/{refreshToken}")]
+        public async Task<IActionResult> Refresh([FromRoute]string refreshToken)
+        {
+            
+            try
+            {
+                var response = await _authService.RefreshTokenAsync(refreshToken);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
+        }
+
+       
+        [HttpPost("logout")]
+        public async Task<IActionResult> Logout([FromBody] LogoutDto logoutDto)
+        {
+            try
+            {
+                var response = await _authService.LogoutAsync(logoutDto.RefreshToken);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new {message = ex.Message});
+            }
+
         }
     }
 }
