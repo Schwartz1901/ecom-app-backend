@@ -11,5 +11,6 @@ namespace AuthAPI
         {
 
         }
+        public DbSet<RefreshToken> RefreshTokens { get; set; }
     }
 }

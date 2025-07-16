@@ -44,6 +44,12 @@ builder.Services.AddCors(opt =>
     {
         policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
     });
+    opt.AddPolicy("AllowAngular", policy =>
+    {
+        policy.WithOrigins("http://localhost:4200")
+             .AllowAnyHeader()
+             .AllowAnyMethod();
+    });
 });
 // Add services to the container.
 builder.Services.AddScoped<IAuthService, AuthService>();
@@ -60,7 +66,7 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
-app.UseCors("AllowAll");
+app.UseCors("AllowAngular");
 app.UseAuthentication();
 app.UseHttpsRedirection();
 
