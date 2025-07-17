@@ -1,8 +1,11 @@
 ﻿using EcomAPI.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace EcomAPI.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class UserController : ControllerBase
@@ -12,17 +15,25 @@ namespace EcomAPI.Controllers
         {
             _userService = userService;
         }
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetUser(Guid id)
+        [HttpGet("profile")]
+        public async Task<IActionResult> GetUser()
         {
+
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            Console.WriteLine($"Extracted userId from token: {userId}");
             try
             {
-                var user = await _userService.GetUserAsync(id);
+                var user = await _userService.GetUserAsync(Guid.Parse(userId));
                 return Ok(user);
             }
-            catch (Exception ex)
+            catch (ArgumentException ex)
             {
-                return BadRequest(new {message = ex.Message});
+                return BadRequest(new { message = ex.Message });
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { message = ex.Message });
             }
         }
     }

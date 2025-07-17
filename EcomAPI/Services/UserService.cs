@@ -17,12 +17,12 @@ namespace EcomAPI.Services
         {
             if (string.IsNullOrEmpty(id.ToString()))
             {
-                throw new Exception("Invalid Id");
+                throw new ArgumentException("Invalid Id");
             }
-            var user = await _context.UserProfiles.FirstOrDefaultAsync(u => u.Id == id);
+            var user = await _context.UserProfiles.FirstOrDefaultAsync(u => u.UserId == id.ToString());
             if (user == null)
             {
-                throw new Exception("Cannot find User");
+                throw new KeyNotFoundException("Cannot find User");
             }
             return new UserProfileDto
             {
