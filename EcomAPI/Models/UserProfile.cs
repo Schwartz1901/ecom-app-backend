@@ -20,12 +20,12 @@ namespace EcomAPI.Models
         [EmailAddress]
         public string Email { get; set; }
   
-        public string PhoneNumber { get; set; } = string.Empty;
-        public string Gender { get; set; } = string.Empty;
+        public string? PhoneNumber { get; set; }
+        public string? Gender { get; set; }
         public DateTime? DateOfBirth { get; set; }
-        public string AvatarUrl { get; set; } = string.Empty;
-        public string Quote { get; set; } = string.Empty;
-        public string SubName { get; set; } = string.Empty;
+        public string? AvatarUrl { get; set; }
+        public string? Quote { get; set; }
+        public string? SubName { get; set; }
 
         // Create Datetime
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
