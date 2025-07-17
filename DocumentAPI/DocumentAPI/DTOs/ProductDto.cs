@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace DocumentAPI.Controllers.DTOs
+namespace DocumentAPI.DTOs
 {
     public class ProductDto
     {

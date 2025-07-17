@@ -1,5 +1,4 @@
-﻿
-using DocumentAPI.Controllers.DTOs;
+﻿using DocumentAPI.DTOs;
 using DocumentAPI.Models;
 
 namespace DocumentAPI.Interfaces

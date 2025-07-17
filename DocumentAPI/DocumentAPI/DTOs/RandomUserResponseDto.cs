@@ -1,4 +1,4 @@
-﻿namespace DocumentAPI.Controllers.DTOs;
+﻿namespace DocumentAPI.DTOs;
 public class RandomUserResponseDto
 {
     public List<Result> Results { get; set; }

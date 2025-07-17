@@ -5,7 +5,7 @@ namespace DocumentAPI.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class ExternalAPIController
+    public class ExternalAPIController : ControllerBase
     {
         private readonly IExternalAPIService _externalAPIService;
         public ExternalAPIController(IExternalAPIService externalAPIService) 

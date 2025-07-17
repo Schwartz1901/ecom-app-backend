@@ -1,6 +1,6 @@
-﻿using DocumentAPI.Controllers.DTOs;
+﻿using DocumentAPI.DTOs;
 using DocumentAPI.Interfaces;
-using DocumentAPI.Models;
+
 using Microsoft.AspNetCore.Mvc;
 
 namespace DocumentAPI.Controllers
