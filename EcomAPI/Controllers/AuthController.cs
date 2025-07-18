@@ -51,13 +51,14 @@ namespace AuthAPI.Controllers
                 return Unauthorized(new { message = ex.Message });
             }
         }
-        [HttpPost("refresh/{refreshToken}")]
-        public async Task<IActionResult> Refresh([FromRoute]string refreshToken)
+        [Authorize]
+        [HttpPost("refresh")]
+        public async Task<IActionResult> Refresh()
         {
-            
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             try
             {
-                var response = await _authService.RefreshTokenAsync(refreshToken);
+                var response = await _authService.RefreshTokenAsync(userId);
                 return Ok(response);
             }
             catch (Exception ex)
@@ -66,14 +67,19 @@ namespace AuthAPI.Controllers
             }
         }
 
-       
+        
         [HttpPost("logout")]
-        public async Task<IActionResult> Logout([FromBody] LogoutDto logoutDto)
+        public async Task<IActionResult> Logout([FromBody]LogoutDto logoutDto)
         {
             try
             {
+                
                 var response = await _authService.LogoutAsync(logoutDto.RefreshToken);
                 return Ok(response);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(new {message = ex.Message});    
             }
             catch (Exception ex)
             {
