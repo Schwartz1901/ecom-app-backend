@@ -22,8 +22,16 @@ namespace DocumentAPI.Services
 
         public async Task<ProductEntity?> GetByIdAsync(int id)
         {
-            if (id < 0) throw new ArgumentException("Invalid Id");
-            return await _context.ProductEntities.FindAsync(id);
+            if (id < 0) 
+            { 
+                throw new ArgumentException("Invalid Id"); 
+            }
+            var product = await _context.ProductEntities.FirstOrDefaultAsync(p => p.Id == id);
+            if (product == null)
+            {
+                throw new KeyNotFoundException("Cannot find Product with given Id");
+            }
+            return product;
         }
 
         public async Task<ProductEntity> AddAsync(ProductDto productDto)
@@ -54,9 +62,15 @@ namespace DocumentAPI.Services
 
         public async Task<bool> DeleteAsync(int id)
         {
+            if (id < 0) 
+            {
+                throw new ArgumentException("Invalid id");
+            }
             var product = await _context.ProductEntities.FindAsync(id);
-            if (product == null) return false;
-
+            if (product == null)
+            {
+                throw new KeyNotFoundException($"Product with ID {id} was not found.");
+            }
             _context.ProductEntities.Remove(product);
             await _context.SaveChangesAsync();
             return true;
