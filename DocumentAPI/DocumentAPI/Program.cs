@@ -12,12 +12,13 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
-builder.Services.AddHttpClient();
 // DI
 builder.Services.AddDbContext<DocumentDbContext>(opt => opt.UseInMemoryDatabase("DocumentDb"));
+
 builder.Services.AddScoped<IProductService, ProductService>();
-builder.Services.AddScoped<IExternalAPIService, ExternalAPIService>();
+
 builder.Services.AddCors(options =>
+
 {
     options.AddDefaultPolicy(policy =>
     {
@@ -45,7 +46,6 @@ app.UseExceptionHandler(appBuilder =>
         {
             // Mapping from Exception to HttpSatusCode
             ArgumentException => StatusCodes.Status400BadRequest,
-
             KeyNotFoundException => StatusCodes.Status404NotFound,
             _ => StatusCodes.Status500InternalServerError
         };

@@ -33,7 +33,6 @@ namespace EcomAPI.Models
 
         [Required]
         [StringLength(20)]
-
         public string PostalCode { get; set; } = string.Empty;
 
         [Required]

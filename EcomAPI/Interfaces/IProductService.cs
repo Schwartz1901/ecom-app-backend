@@ -7,7 +7,7 @@ namespace EcomAPI.Interfaces
     {
         Task<List<Product>> GetProductsAsync();
         Task<Product> GetProductByIdAsync(int id);
-        Task AddProductAsync(ProductDto productDto);
+        Task<Product> AddProductAsync(ProductDto productDto);
         Task<bool> DeleteProductAsync(int id);
         Task<Product> UpdateProductAsync(int id, ProductDto productDto);
     }
