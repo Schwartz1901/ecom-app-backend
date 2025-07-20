@@ -1,4 +1,5 @@
-﻿using EcomAPI.Models;
+﻿using EcomAPI.Controllers.Dtos;
+using EcomAPI.Models;
 
 namespace EcomAPI.Interfaces
 {
@@ -6,8 +7,8 @@ namespace EcomAPI.Interfaces
     {
         Task<List<Product>> GetProductsAsync();
         Task<Product> GetProductByIdAsync(int id);
-        Task AddProductAsync();
-        Task<bool> DeleteProductAsync();
-        Task<Product> UpdateProductAsync(Product product);
+        Task AddProductAsync(ProductDto productDto);
+        Task<bool> DeleteProductAsync(int id);
+        Task<Product> UpdateProductAsync(int id, ProductDto productDto);
     }
 }

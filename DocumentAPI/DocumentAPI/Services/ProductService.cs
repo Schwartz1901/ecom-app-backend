@@ -1,9 +1,9 @@
-﻿using DocumentAPI.Controllers.DTOs;
+﻿using DocumentAPI.DTOs;
 using DocumentAPI.Interfaces;
 using DocumentAPI.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Text.Json;
+
 
 namespace DocumentAPI.Services
 {
@@ -94,12 +94,8 @@ namespace DocumentAPI.Services
             await _context.SaveChangesAsync();
             return product;
         }
-
-        public void serialize()
-        {
-            string json = "{\"Id\":1,\"Name\":\"Book\"}";
-            ProductEntity product = JsonSerializer.Deserialize<ProductEntity>(json);
-        }
         
+ 
+
     }
 }

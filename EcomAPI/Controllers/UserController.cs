@@ -21,20 +21,9 @@ namespace EcomAPI.Controllers
 
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            Console.WriteLine($"Extracted userId from token: {userId}");
-            try
-            {
-                var user = await _userService.GetUserAsync(Guid.Parse(userId));
-                return Ok(user);
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(new { message = ex.Message });
-            }
-            catch (KeyNotFoundException ex)
-            {
-                return NotFound(new { message = ex.Message });
-            }
+            var user = await _userService.GetUserAsync(Guid.Parse(userId));
+            return Ok(user);
+          
         }
     }
 }

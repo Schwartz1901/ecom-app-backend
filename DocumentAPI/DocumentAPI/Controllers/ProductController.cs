@@ -1,4 +1,4 @@
-﻿using DocumentAPI.Controllers.DTOs;
+﻿using DocumentAPI.DTOs;
 using DocumentAPI.Interfaces;
 using DocumentAPI.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -48,7 +48,7 @@ namespace DocumentAPI.Controllers
         public async Task<IActionResult> Create([FromBody] ProductDto product) 
         {
             if (!ModelState.IsValid)
-                return BadRequest(ModelState)
+                return BadRequest(ModelState);
             var created = await _productService.AddAsync(product);
 
             return CreatedAtAction(

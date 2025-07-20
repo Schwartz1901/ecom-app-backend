@@ -5,6 +5,7 @@ using AuthAPI.Services;
 using EcomAPI.Interfaces;
 using EcomAPI.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -84,7 +85,31 @@ if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
+app.UseExceptionHandler(appBuilder =>
+{
+    appBuilder.Run(async context =>
+    {
+        var exceptionHandler = context.Features.Get<IExceptionHandlerFeature>();
+        var exception = exceptionHandler?.Error;
 
+        context.Response.ContentType = "application/json";
+        context.Response.StatusCode = exception switch
+        {
+            // Mapping from Exception to HttpSatusCode
+            ArgumentException => StatusCodes.Status400BadRequest,
+            KeyNotFoundException => StatusCodes.Status404NotFound,
+            _ => StatusCodes.Status500InternalServerError
+        };
+
+        var response = new
+        {
+            status = context.Response.StatusCode,
+            message = exception?.Message
+        };
+
+        await context.Response.WriteAsJsonAsync(response);
+    });
+});
 app.UseCors("AllowAngular");
 app.UseAuthentication();
 app.UseHttpsRedirection();

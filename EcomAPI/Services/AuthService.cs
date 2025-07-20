@@ -67,11 +67,11 @@ namespace AuthAPI.Services
             return await GenerateTokensAsync(user);
         }
 
-        public async Task<AuthResponseDto> RefreshTokenAsync(string refreshToken)
+        public async Task<AuthResponseDto> RefreshTokenAsync(string id)
         {
             var tokenEntity = await _context.RefreshTokens
                 .Include(r => r.User)
-                .FirstOrDefaultAsync(r => r.Token == refreshToken && r.IsActive);
+                .FirstOrDefaultAsync(r => r.UserId == id && r.IsActive);
 
             if (tokenEntity == null)
                 throw new Exception("Invalid or expired refresh token");
@@ -99,8 +99,9 @@ namespace AuthAPI.Services
         {
             if (string.IsNullOrEmpty(refreshToken))
             {
-                throw new Exception("Invalid");
+                throw new UnauthorizedAccessException("Unauthorized");
             }
+            
             var token = await _context.RefreshTokens.FirstOrDefaultAsync(t => t.Token == refreshToken);
             if (token == null)
                 return false;
@@ -109,6 +110,7 @@ namespace AuthAPI.Services
             
             _context.RefreshTokens.Update(token);
             await _context.SaveChangesAsync();
+            Console.WriteLine($"Revoke token ${token.Token}");
             return true;
 
         }
