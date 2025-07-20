@@ -15,6 +15,7 @@ using System.Text;
 var builder = WebApplication.CreateBuilder(args);
 // Add connection string
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
 // Add Identity
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
@@ -51,8 +52,9 @@ builder.Services.AddAuthentication(options =>
         }
     };
 });
-
+builder.Services.AddHttpClient();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IProductService, ProductService>();
 
 // Add Authorization
 builder.Services.AddAuthorization();

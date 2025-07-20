@@ -6,6 +6,7 @@ namespace EcomAPI.Controllers
 {
 
     [ApiController]
+    [Route("api/[controller]")]
     public class ProductController : ControllerBase
     {
         private readonly IProductService _productService;
@@ -19,18 +20,16 @@ namespace EcomAPI.Controllers
    
             var products = await _productService.GetProductsAsync();
             return Ok(products);
-          
-       
+ 
            
         }
-        [HttpGet("id")]
+        [HttpGet("{id}")]
         public async Task<IActionResult> GetProduct([FromRoute] int id)
         {
             
             var product = await _productService.GetProductByIdAsync(id);
             return Ok(product);
             
-
         }
         [HttpPost]
         public async Task<IActionResult> AddProduct([FromBody] ProductDto productDto)
@@ -52,7 +51,7 @@ namespace EcomAPI.Controllers
             return Ok(product);
         }
 
-        [HttpDelete("id")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteProduct([FromRoute] int id)
         {
             var isDelete = await _productService.DeleteProductAsync(id);

@@ -10,12 +10,14 @@ builder.Services.AddSwaggerGen();
 // Add services to the container.
 
 builder.Services.AddControllers();
+builder.Services.AddHttpClient();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 // DI
 builder.Services.AddDbContext<DocumentDbContext>(opt => opt.UseInMemoryDatabase("DocumentDb"));
 
 builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<IExternalAPIService, ExternalAPIService>();
 
 builder.Services.AddCors(options =>
 
@@ -27,6 +29,7 @@ builder.Services.AddCors(options =>
               .AllowAnyHeader();
     });
 });
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
