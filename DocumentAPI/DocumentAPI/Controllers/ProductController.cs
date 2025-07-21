@@ -15,7 +15,7 @@ namespace DocumentAPI.Controllers
             _productService = productService;
         }
         [HttpGet("hello")]
-        public ActionResult Hello()
+        public IActionResult Hello()
         {
             return Ok("Hello");
         }
@@ -45,9 +45,10 @@ namespace DocumentAPI.Controllers
         }
         [HttpPost]
         // POST api/Product 
-        public async Task<IActionResult> Create([FromBody] ProductDto product)
+        public async Task<IActionResult> Create([FromBody] ProductDto product) 
         {
-
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
             var created = await _productService.AddAsync(product);
 
             return CreatedAtAction(
@@ -58,14 +59,15 @@ namespace DocumentAPI.Controllers
 
         }
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update([FromRoute] int id, [FromBody] ProductDto productDto)
+        public async Task<IActionResult> Update([FromRoute] int id, [FromBody] ProductDto productDto) // Deserialize json to object
         {
-           
+            
             var product = await _productService.UpdateAsync(id, productDto);
             if (product == null)
             {
                 return NotFound("Cannot find product with Id " + id);
             }
+            // Serialize object to json
             return Ok(product);
         }
 
