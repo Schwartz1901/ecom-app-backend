@@ -19,10 +19,7 @@ builder.Services.AddDbContext<DocumentDbContext>(opt => opt.UseInMemoryDatabase(
 
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IExternalAPIService, ExternalAPIService>();
-<<<<<<< HEAD
-=======
 
->>>>>>> b81058516da844056de0e627b62ad2532d9d3108
 builder.Services.AddCors(options =>
 
 {

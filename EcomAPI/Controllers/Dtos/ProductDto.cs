@@ -20,9 +20,7 @@ namespace EcomAPI.Controllers.Dtos
         public decimal DiscountPrice { get; set; }
 
         public bool IsDiscount { get; set; }
-
-        [Required]
-        [Url]
+        
         public string ImageUrl { get; set; } = string.Empty;
 
         [StringLength(200)]

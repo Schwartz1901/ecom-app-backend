@@ -27,15 +27,6 @@ namespace EcomAPI.Models
         [Required]
         [EmailAddress]
         public string Email { get; set; }
-<<<<<<< HEAD
-  
-        public string? PhoneNumber { get; set; }
-        public string? Gender { get; set; }
-        public DateTime? DateOfBirth { get; set; }
-        public string? AvatarUrl { get; set; }
-        public string? Quote { get; set; }
-        public string? SubName { get; set; }
-=======
 
         [Phone]
         public string PhoneNumber { get; set; } = string.Empty;
@@ -54,7 +45,6 @@ namespace EcomAPI.Models
 
         [StringLength(50)]
         public string SubName { get; set; } = string.Empty;
->>>>>>> b81058516da844056de0e627b62ad2532d9d3108
 
         // Audit info
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
