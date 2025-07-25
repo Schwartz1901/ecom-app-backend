@@ -2,11 +2,14 @@
 
 namespace Product.API.Controllers
 {
+    [ApiController]
+    [Route("api/[controller]")]
     public class ProductController : Controller
     {
-        public IActionResult Index()
-        {
-            return View();
-        }
+        //[HttpGet("{id}")]
+        //public async Task<IActionResult> GetById([FromRoute] int id)
+        //{
+        //    var products =
+        //}
     }
 }
