@@ -6,10 +6,11 @@ namespace Product.API.Controllers
     [Route("api/[controller]")]
     public class ProductController : Controller
     {
-        //[HttpGet("{id}")]
-        //public async Task<IActionResult> GetById([FromRoute] int id)
-        //{
-        //    var products =
-        //}
+        [HttpGet("hello")]
+        public ActionResult Hello()
+        {
+            return Ok("HEllo");
+        }
+        
     }
 }
