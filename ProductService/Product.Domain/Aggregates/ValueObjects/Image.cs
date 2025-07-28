@@ -11,7 +11,10 @@ namespace Product.Domain.Aggregates.ValueObjects
     {
         public string ImageUrl  { get; set; }
         public string ImageAlt { get; set; }
-        public Image() { }
+        public Image(string imageUrl, string imageAlt) {
+            ImageUrl = imageUrl;
+            ImageAlt = imageAlt;
+        }
         protected override IEnumerable<object> GetEqualityComponents()
         {
             yield return ImageUrl;

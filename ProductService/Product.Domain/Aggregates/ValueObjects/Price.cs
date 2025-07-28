@@ -29,14 +29,16 @@ namespace Product.Domain.Aggregates.ValueObjects
 
         public float GetPrice()
         {
-            if (this.IsDiscount)
+            if (IsDiscount)
             {
-                return this.DiscountPrice;
+                return DiscountPrice;
             }
             else
             {
-                return this.NormalPrice;
+                return NormalPrice;
             }
         }
+
+       
     }
 }
