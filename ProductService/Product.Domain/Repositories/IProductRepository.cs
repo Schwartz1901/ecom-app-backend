@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Product.Domain.Repositories
 {
-    internal interface IProductRepository : IRepository<ProductAggregate>
+    public interface IProductRepository : IRepository<ProductAggregate>
     {
         Task<ProductAggregate> GetByIdAsync(ProductId id);
         Task<ProductAggregate> GetByNameAsync(string name);

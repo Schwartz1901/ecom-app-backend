@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Product.Domain.SeedWork
 {
-    internal interface IAggregateRoot
+    public interface IAggregateRoot
     {
     }
 }
