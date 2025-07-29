@@ -9,10 +9,10 @@ namespace Product.Domain.Aggregates.ValueObjects
 {
     public class Price : ValueObject
     {
-        public float NormalPrice { get; set; }
-        public float DiscountPrice { get; set; }
+        public double NormalPrice { get; set; }
+        public double DiscountPrice { get; set; }
         public bool IsDiscount { get; set; }
-        public Price(float normalPrice, float discountPrice, bool isDiscount) 
+        public Price(double normalPrice, double discountPrice, bool isDiscount) 
         {
             NormalPrice = normalPrice;
             DiscountPrice = discountPrice;
@@ -27,16 +27,19 @@ namespace Product.Domain.Aggregates.ValueObjects
             yield return IsDiscount;
         }
 
-        public float GetPrice()
+        public double GetCurrentPrice()
         {
-            if (this.IsDiscount)
+            if (IsDiscount)
             {
-                return this.DiscountPrice;
+                return DiscountPrice;
             }
             else
             {
-                return this.NormalPrice;
+                return NormalPrice;
             }
         }
+
+
+       
     }
 }

@@ -6,7 +6,15 @@ using System.Threading.Tasks;
 
 namespace Product.Domain.SeedWork
 {
-    internal interface IRepository
+    public interface IRepository<T, TId> where T : IAggregateRoot
     {
+        Task<T?> GetByIdAsync(TId id);
+        Task<List<T>> GetAllAsync();
+        Task AddAsync(T entity);
+        Task RemoveAsync(TId id);
+        Task<bool> UpdateAsync(T entity);
+        Task SaveChangesAsync();
+
+
     }
 }
