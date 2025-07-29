@@ -6,10 +6,9 @@ namespace Product.Domain.Aggregates.ValueObjects
 {
     public class ProductId : ValueObject
     {
-        public Guid Id { get; }
+        public Guid Id { get; private set; }
 
-     
-        public static ProductId NewId() => new ProductId(Guid.NewGuid());
+        
         public ProductId(Guid id)
         {
             if (id == Guid.Empty)
@@ -18,7 +17,9 @@ namespace Product.Domain.Aggregates.ValueObjects
         }
 
         // Required by EF Core
+        
         private ProductId() { }
+        
 
         protected override IEnumerable<object> GetEqualityComponents()
         {

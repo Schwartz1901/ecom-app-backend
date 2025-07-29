@@ -9,12 +9,12 @@ using System.Threading.Tasks;
 
 namespace Product.Domain.Repositories
 {
-    public interface IProductRepository : IRepository<ProductAggregate>
+    public interface IProductRepository : IRepository<ProductAggregate, ProductId>
     {
-        Task<ProductAggregate> GetByIdAsync(ProductId id);
-        Task<ProductAggregate> GetByNameAsync(string name);
-        Task AddAsync(ProductAggregate product);
-        Task UpdateAsync(ProductAggregate product);
+        //Task<ProductAggregate> GetByIdAsync(ProductId id);
+        Task<ProductAggregate?> GetByNameAsync(string name);
+        //Task AddAsync(ProductAggregate product);
+        //Task UpdateAsync(ProductAggregate product);
         
         
     }

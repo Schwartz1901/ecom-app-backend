@@ -20,6 +20,9 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "APIGateway", "APIGateway\APIGateway\APIGateway.csproj", "{C55936FD-9834-4CBE-8227-6AE2FCC8C284}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Product.API", "ProductService\Product.API\Product.API.csproj", "{2739B085-A86B-4D87-BDB5-7DCEC4DC3D57}"
+	ProjectSection(ProjectDependencies) = postProject
+		{EA8EECF1-D766-49BF-83A1-437663E195A8} = {EA8EECF1-D766-49BF-83A1-437663E195A8}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Product.Infrastructure", "ProductService\Product.Infrastructure\Product.Infrastructure.csproj", "{9DFEE708-FFB7-44C3-9AAD-6E913B2419B1}"
 EndProject

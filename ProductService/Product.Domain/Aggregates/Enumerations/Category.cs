@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Product.Domain.Aggregates.Enumerations
 {
-    internal class Category : Enumeration
+    public class Category : Enumeration
     {
         public static Category Herb = new (1, nameof(Herb));
         public static Category Tea = new(2, nameof(Tea));
