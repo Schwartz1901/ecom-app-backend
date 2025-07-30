@@ -4,10 +4,10 @@ namespace Order.API.Interfaces
 {
     public interface IOrderService
     {
-        Task<OrderDto> GetById(Guid id);
-        Task<List<OrderDto>> GetAll();
-        Task Add(OrderDto orderDto);
-        Task Update(OrderDto orderDto);
-        Task Delete(Guid id);
+        Task<OrderDto> GetByIdAsync(Guid id);
+        Task<List<OrderDto>> GetAllAsync();
+        Task AddAsync(OrderDto orderDto);
+        Task UpdateAsync(OrderDto orderDto);
+        Task DeletesAsync(Guid id);
     }
 }

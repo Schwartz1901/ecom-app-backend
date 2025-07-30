@@ -65,16 +65,17 @@ namespace Order.API.Services
 
             return orderDtos;
         }
-        public async Task Add(OrderDto orderDto)
+        public async Task AddAsync(OrderDto orderDto)
         {
-
+            // TODO: Add Order with BuyerId and Fetch data from CartService
         }
-        public async Task Update(OrderDto orderDto)
+        public async Task UpdateAsync(OrderDto orderDto)
         {
-
+            // TODO: Update Order
         }
-        public async Task Delete(Guid id)
+        public async Task DeleteAsync(Guid id)
         {
+            // TODO: Delete Order
 
         }
     }
