@@ -38,7 +38,12 @@ namespace Order.Domain.Aggregates.Entities
             Quantity += num;
         }
 
-        public double GetCurrentPrice()
+        public double GetUnitPrice()
+        {
+            return Discount ? DiscountPrice : NormalPrice;
+        }
+
+        public double GetTotalPrice()
         {
             return (Discount ? DiscountPrice : NormalPrice) * Quantity;
         }

@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Order.Domain.Aggregates;
+using Order.Domain.Aggregates.Enumerations;
 using Order.Domain.Aggregates.ValueObjects;
 using System;
 using System.Collections.Generic;
@@ -11,9 +12,9 @@ namespace Order.Infrastructure.Data
 {
     public class OrderDbContext : DbContext
     {
-        DbSet<OrderAggregate> Orders { get; set; }
+        public DbSet<OrderAggregate> Orders { get; set; }
   
-        DbSet<Buyer> Buyer { get; set; }
+        public DbSet<Buyer> Buyer { get; set; }
 
         public OrderDbContext(DbContextOptions<OrderDbContext> options) : base(options) { }
 
@@ -57,6 +58,7 @@ namespace Order.Infrastructure.Data
                 builder.Navigation(o => o.OrderItems).UsePropertyAccessMode(PropertyAccessMode.Field);
 
             });
+           
 
             modelBuilder.Entity<Buyer>(builder =>
             {

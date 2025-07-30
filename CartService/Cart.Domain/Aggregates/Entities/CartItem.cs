@@ -46,11 +46,7 @@ namespace Order.Domain.Aggregates.Entities
             return (Discount ? DiscountPrice : NormalPrice) * Quantity;
         }
 
-        public OrderItem ToOrderItem()
-        {
-            var orderItem = new OrderItem(Name, ImageUrl, ImageAlt, NormalPrice, DiscountPrice, Discount, Quantity, ProductId);
-            return orderItem;
-        }
+        
 
     }
 }

@@ -52,7 +52,7 @@ namespace Order.Domain.Aggregates
             _orderStatusId = status.Id;
         }
 
-        public double GetTotal() => _orderItems.Sum(i => i.GetCurrentPrice());
+        public double GetTotal() => _orderItems.Sum(i => i.GetTotalPrice());
     }
 }
  
