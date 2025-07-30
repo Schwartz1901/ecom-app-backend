@@ -8,6 +8,6 @@ namespace Order.API.Interfaces
         Task<List<OrderDto>> GetAllAsync();
         Task AddAsync(OrderDto orderDto);
         Task UpdateAsync(OrderDto orderDto);
-        Task DeletesAsync(Guid id);
+        Task DeleteAsync(Guid id);
     }
 }

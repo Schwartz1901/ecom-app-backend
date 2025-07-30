@@ -16,7 +16,7 @@ namespace Order.API.Services
             _orderRepository = orderRepository;
             _unitOfWork = unitOfWork;
         }
-        public async Task<OrderDto> GetById(Guid id)
+        public async Task<OrderDto> GetByIdAsync(Guid id)
         {
             if (id == null)
             {
@@ -45,7 +45,7 @@ namespace Order.API.Services
 
             return orderDto;
         }
-        public async Task<List<OrderDto>> GetAll()
+        public async Task<List<OrderDto>> GetAllAsync()
         {
             var results = await _orderRepository.GetAllAsync();
             var orderDtos = results.Select(result => new OrderDto
