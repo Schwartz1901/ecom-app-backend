@@ -1,4 +1,5 @@
 ﻿using Order.Domain.Aggregates;
+using Order.Domain.Aggregates.Entities;
 using Order.Domain.Aggregates.ValueObjects;
 using Product.Domain.SeedWork;
 using System;
@@ -11,6 +12,6 @@ namespace Order.Domain.Repositories
 {
     public interface IOrderRepository: IRepository<OrderAggregate, OrderId>
     {
-        Task SubmitOrder(Cart cart, Buyer buyer, string description);
+        
     }
 }

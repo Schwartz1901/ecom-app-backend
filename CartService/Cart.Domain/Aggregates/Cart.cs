@@ -1,5 +1,5 @@
 ﻿using Order.Domain.Aggregates.Entities;
-using Order.Domain.Aggregates.ValueObjects;
+
 using Product.Domain.SeedWork;
 using System;
 using System.Collections.Generic;
@@ -11,14 +11,14 @@ namespace Order.Domain.Aggregates
 {
     public class Cart : Entity, IAggregateRoot
     {
-        public BuyerId BuyerId { get; private set; }
+        public Guid BuyerId { get; private set; }
         private readonly List<CartItem> _cartItems = new();
         public IReadOnlyCollection<CartItem> CartItems => _cartItems;
 
         private Cart() { }
-        public Cart(Guid userId)
+        public Cart(Guid buyerId)
         {
-            UserId = userId;
+            BuyerId = buyerId;
         }
 
         public void AddItem(CartItem item) 
