@@ -10,26 +10,32 @@ using System.Threading.Tasks;
 
 namespace Order.Domain.Aggregates
 {
-    public class Order : Entity, IAggregateRoot
+    public class OrderAggregate : Entity, IAggregateRoot
     {
-        public Guid UserId { get; private set; }
+        public OrderId Id { get; private set; }
+        public BuyerId BuyerId { get; private set; }
+        
         public DateTime OrderDate { get; private set; }
         public string Description { get; private set; }
         public OrderStatus OrderStatus { get; private set; }
         private int _orderStatusId;
 
         private List<OrderItem> _orderItems;
-        public IReadOnlyCollection<OrderItem> OrderItem => _orderItems;
+        public IReadOnlyCollection<OrderItem> OrderItems => _orderItems;
         public Address Address { get; private set; }
 
-        private Order() 
+        
+
+        private OrderAggregate() 
         {
+            Id = OrderId.NewId();
             _orderItems = new List<OrderItem>();
         }
 
-        public Order(Guid userId, Address address, DateTime orderDate, string description, OrderStatus orderStatus, List<OrderItem> orderItems )
+        public OrderAggregate(BuyerId buyerId, Address address, DateTime orderDate, string description, OrderStatus orderStatus, List<OrderItem> orderItems )
         {
-            UserId = userId;
+            Id = OrderId.NewId();
+            BuyerId = buyerId;
             Address = address ?? throw new ArgumentNullException(nameof(address));
             OrderDate = orderDate;
             Description = description;

@@ -50,15 +50,13 @@ namespace Product.Domain.SeedWork
             var matchingItem = Parse<T, string>(name, "name", item => item.Name == name);
             return matchingItem;
         }
-
-
         public int CompareTo(object? other) => Id.CompareTo(((Enumeration)other!).Id);
 
         private static T Parse<T, K>(K value, string description, Func<T, bool> predicate) where T : Enumeration
         {
             var matchingItem = GetAll<T>().FirstOrDefault(predicate);
 
-            if (matchingItem == null)
+            if (matchingItem is null)
                 throw new InvalidOperationException($"'{value}' is not a valid {description} in {typeof(T)}");
 
             return matchingItem;
