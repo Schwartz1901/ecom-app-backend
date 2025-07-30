@@ -75,5 +75,16 @@ namespace Product.Infrastructure.Repositories
         {
             await _dbContext.SaveChangesAsync();
         }
+
+        public async Task<bool> ApplyDiscount(ProductId id, bool isDiscount, double percentage)
+        {
+            var product = await _dbContext.Products.FirstOrDefaultAsync(p => p.Id == id);
+            if (product == null) throw new Exception("");
+
+            product.ApplyDiscount(isDiscount, percentage);
+
+            await _dbContext.SaveChangesAsync();
+            return true;
+        }
     }
 }

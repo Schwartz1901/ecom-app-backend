@@ -15,7 +15,7 @@ namespace Product.Domain.Repositories
         Task<ProductAggregate?> GetByNameAsync(string name);
         //Task AddAsync(ProductAggregate product);
         //Task UpdateAsync(ProductAggregate product);
-        
+        Task<bool> ApplyDiscount(ProductId id, bool isDiscount, double percentage);
         
     }
 }

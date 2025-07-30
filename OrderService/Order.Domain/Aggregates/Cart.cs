@@ -14,5 +14,23 @@ namespace Order.Domain.Aggregates
         public IReadOnlyCollection<CartItem> CartItems => _cartItems;
         public Guid UserId { get; private set; }
 
+        private Cart() { }
+        public Cart(Guid userId)
+        {
+            UserId = userId;
+        }
+
+        public void AddItem(CartItem item) 
+        { 
+            var exists = _cartItems.FirstOrDefault(i => i.ProductId == item.ProductId);
+            if (exists != null)
+            {
+                exists.IncreaseQuantity(item.Quantity);
+            }
+            else
+            {
+                _cartItems.Add(item);
+            }
+        }
     }
 }

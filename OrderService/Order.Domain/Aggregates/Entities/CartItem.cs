@@ -28,11 +28,11 @@ namespace Order.Domain.Aggregates.Entities
             Quantity = quantity;
         }
 
-        public void ChangeQuantity(int quantity)
+        public void IncreaseQuantity(int quantity)
         {
             if (quantity <= 0)
                 throw new ArgumentException("Quantity must be greater than zero.");
-            Quantity = quantity;
+            Quantity += quantity;
         }
 
         public double GetCurrentPrice()
