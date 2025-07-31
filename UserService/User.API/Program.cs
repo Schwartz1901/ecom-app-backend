@@ -8,6 +8,10 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("LocalDatabase");
+builder.Services.AddHttpClient("CartService", client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7003/api");
+});
 builder.Services.AddDbContext<UserDbContext>(options => options.UseSqlServer(connectionString));
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();

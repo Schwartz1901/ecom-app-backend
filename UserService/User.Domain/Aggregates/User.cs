@@ -19,12 +19,12 @@ namespace User.Domain.Aggregates
         public string? PhoneNumber { get; private set; }
         public DateTime CreatedAt { get; private set; }
         private UserAggregate() { }
-        public UserAggregate(UserId id, string username, string email, string? phoneNumber)
+        public UserAggregate( string username, string email)
         {
-            Id = id;
+            Id = UserId.NewId();
             Username = username;
             Email = email;
-            PhoneNumber = phoneNumber;
+            
             CreatedAt = DateTime.UtcNow;
             IsActive = true;
         }

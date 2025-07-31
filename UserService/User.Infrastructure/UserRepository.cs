@@ -14,5 +14,12 @@ namespace User.Infrastructure
     public class UserRepository : BaseRepository<UserAggregate, UserId>, IUserRepository
     {
         public UserRepository(UserDbContext dbContext) : base(dbContext) { }
+
+        public async Task<UserId> CreateUserAsync(UserAggregate user)
+        {
+            _dbSet.Add(user);
+            await _dbContext.SaveChangesAsync();
+            return user.Id;
+        }
     }
 }
