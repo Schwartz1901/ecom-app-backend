@@ -1,23 +1,24 @@
-﻿using Order.Domain.SeedWork;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using User.Domain.SeedWork;
 
-namespace Order.Domain.Aggregates.ValueObjects
+namespace User.Domain.Aggregates.ValueObjects
 {
-    public class BuyerId: ValueObject
+    public class UserId : ValueObject
     {
         public Guid Value { get; set; }
 
-        private BuyerId() { }
-        public BuyerId(Guid value)
+        private UserId() { }
+
+        public UserId(Guid value)
         {
             Value = value;
         }
 
-        public static BuyerId NewId() => new BuyerId(Guid.NewGuid());
+        public static UserId NewId() => new UserId(Guid.NewGuid());
 
         protected override IEnumerable<object> GetEqualityComponents()
         {

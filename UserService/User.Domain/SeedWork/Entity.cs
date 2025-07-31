@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using MediatR;
-namespace Order.Domain.SeedWork
+namespace User.Domain.SeedWork
 {
     public abstract class Entity
 {

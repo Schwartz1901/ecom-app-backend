@@ -1,12 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Order.Domain.SeedWork;
+using User.Domain.SeedWork;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Order.Infrastructure.Repositories
+namespace User.Infrastructure.Repositories
 {
     public abstract class BaseRepository<T, TId> : IRepository<T, TId> where T : class, IAggregateRoot
     {
