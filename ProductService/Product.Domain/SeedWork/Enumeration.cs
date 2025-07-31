@@ -39,6 +39,29 @@ namespace Product.Domain.SeedWork
         public static bool operator ==(Enumeration left, Enumeration right) => Equals(left, right);
         public static bool operator !=(Enumeration left, Enumeration right) => !(left == right);
 
+        public static T FromId<T>(int id) where T : Enumeration
+        {
+            var matchingItem = Parse<T, int>(id, "Id", item => item.Id == id);
+            return matchingItem;
+        }
+
+        public static T FromName<T>(string name) where T : Enumeration
+        {
+            var matchingItem = Parse<T, string>(name, "name", item => item.Name == name);
+            return matchingItem;
+        }
+
+
         public int CompareTo(object? other) => Id.CompareTo(((Enumeration)other!).Id);
+
+        private static T Parse<T, K>(K value, string description, Func<T, bool> predicate) where T : Enumeration
+        {
+            var matchingItem = GetAll<T>().FirstOrDefault(predicate);
+
+            if (matchingItem == null)
+                throw new InvalidOperationException($"'{value}' is not a valid {description} in {typeof(T)}");
+
+            return matchingItem;
+        }
     }
 }
