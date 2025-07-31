@@ -14,6 +14,7 @@ namespace Cart.Infrastructure
     {
         public DbSet<CartAggregate> Carts { get; set; }
 
+        public CartDbContext(DbContextOptions<CartDbContext> obtions) : base(obtions) { }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<CartAggregate>(builder =>
@@ -25,14 +26,16 @@ namespace Cart.Infrastructure
                     value => new CartUserId(value)
                 ).HasColumnName("Id").IsRequired();
                 builder.HasKey(c => c.CartUserId);
-                builder.Navigation(c => c.CartItems)
-                    .UsePropertyAccessMode(PropertyAccessMode.Field);
 
-                builder
-                    .HasMany(typeof(CartItem), "_cartItems")
-                    .WithOne()
-                    .HasForeignKey("CartId")
-                    .OnDelete(DeleteBehavior.Cascade);
+                builder.Ignore(c => c.CartItems);
+            });
+            modelBuilder.Entity<CartItem>(builder =>
+            {
+                builder.ToTable("CartItems");
+
+                builder.HasKey(ci => ci.Id);
+
+                
             });
         }
     }

@@ -3,7 +3,7 @@ using Order.API.Interfaces;
 using Order.Domain.Aggregates.ValueObjects;
 using Order.Domain.Repositories;
 using Order.Infrastructure.Repositories;
-using Product.Domain.SeedWork;
+using Order.Domain.SeedWork;
 
 namespace Order.API.Services
 {

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Product.Domain.SeedWork
+namespace Order.Domain.SeedWork
 {
     public interface IAggregateRoot
     {

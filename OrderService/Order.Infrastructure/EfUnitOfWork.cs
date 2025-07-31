@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
-using Product.Domain.SeedWork;
+using Order.Domain.SeedWork;
 using System;
 using System.Collections.Generic;
 using System.Linq;
