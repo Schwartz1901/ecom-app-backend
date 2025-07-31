@@ -1,4 +1,4 @@
-﻿namespace Product.Domain.SeedWork
+﻿namespace Cart.Domain.SeedWork
 {
     public interface IUnitOfWork : IDisposable
     {

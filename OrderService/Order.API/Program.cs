@@ -1,4 +1,6 @@
 using Microsoft.EntityFrameworkCore;
+using Order.API.Interfaces;
+using Order.API.Services;
 using Order.Domain.Repositories;
 using Order.Infrastructure;
 using Order.Infrastructure.Data;
@@ -15,6 +17,7 @@ builder.Services.AddDbContext<OrderDbContext>(options => options.UseSqlServer(co
 
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IUnitOfWork, EfUnitOfWork>();
+builder.Services.AddScoped<IOrderService, OrderService>
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

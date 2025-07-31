@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using MediatR;
-namespace Product.Domain.SeedWork
+namespace Cart.Domain.SeedWork
 {
     public abstract class Entity
 {

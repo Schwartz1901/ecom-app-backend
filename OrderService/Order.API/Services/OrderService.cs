@@ -7,11 +7,11 @@ using Product.Domain.SeedWork;
 
 namespace Order.API.Services
 {
-    public class OrderServices : IOrderService
+    public class OrderService : IOrderService
     {
         private readonly IOrderRepository _orderRepository;
         private readonly IUnitOfWork _unitOfWork;
-        public OrderServices(IOrderRepository orderRepository, IUnitOfWork unitOfWork) 
+        public OrderService(IOrderRepository orderRepository, IUnitOfWork unitOfWork) 
         {
             _orderRepository = orderRepository;
             _unitOfWork = unitOfWork;

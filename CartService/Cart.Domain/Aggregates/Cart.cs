@@ -1,6 +1,7 @@
-﻿using Order.Domain.Aggregates.Entities;
+﻿using Cart.Domain.Aggregates.ValueObjects;
+using Order.Domain.Aggregates.Entities;
 
-using Product.Domain.SeedWork;
+using Cart.Domain.SeedWork;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,16 +10,16 @@ using System.Threading.Tasks;
 
 namespace Order.Domain.Aggregates
 {
-    public class Cart : Entity, IAggregateRoot
+    public class CartAggregate : Entity, IAggregateRoot
     {
-        public Guid BuyerId { get; private set; }
+        public CartUserId CartUserId { get; private set; }
         private readonly List<CartItem> _cartItems = new();
         public IReadOnlyCollection<CartItem> CartItems => _cartItems;
 
-        private Cart() { }
-        public Cart(Guid buyerId)
+        private CartAggregate() { }
+        public CartAggregate(CartUserId cartUserId)
         {
-            BuyerId = buyerId;
+            CartUserId = cartUserId;
         }
 
         public void AddItem(CartItem item) 
@@ -42,5 +43,7 @@ namespace Order.Domain.Aggregates
         {
             _cartItems.Clear();
         }
+
+        public double GetTotalPrice() => CartItems.Sum(i => i.GetCurrentPrice());
     }
 }

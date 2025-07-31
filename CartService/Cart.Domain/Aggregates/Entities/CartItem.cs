@@ -1,4 +1,4 @@
-﻿using Product.Domain.SeedWork;
+﻿using Cart.Domain.SeedWork;
 using System;
 using System.Collections.Generic;
 using System.Linq;
