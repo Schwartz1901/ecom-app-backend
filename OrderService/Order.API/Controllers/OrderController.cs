@@ -12,7 +12,7 @@ namespace Order.API.Controllers
         {
             _orderService = orderService;
         }
-        [HttpGet("{id]")]
+        [HttpGet("{id}")]
         public async Task<IActionResult> GetById([FromRoute] Guid id)
         {
             try

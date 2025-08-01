@@ -17,8 +17,8 @@ namespace User.Infrastructure
 
         public async Task<UserId> CreateUserAsync(UserAggregate user)
         {
-            _dbSet.Add(user);
-            await _dbContext.SaveChangesAsync();
+            await _dbSet.AddAsync(user);
+            
             return user.Id;
         }
     }

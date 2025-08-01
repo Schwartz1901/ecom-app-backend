@@ -1,20 +1,21 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
-using Order.Domain.SeedWork;
-using Order.Infrastructure.Data;
+using User.Domain.SeedWork;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using User.Infrastructure;
 
-namespace Order.Infrastructure
+namespace User.Infrastructure
 {
     public class EfUnitOfWork : IUnitOfWork
     {
-        private readonly OrderDbContext _dbContext;
+        private readonly UserDbContext _dbContext;
         private IDbContextTransaction? _currentTransaction;
-        public EfUnitOfWork(OrderDbContext dbContext) 
+        public EfUnitOfWork(UserDbContext dbContext) 
         { 
             _dbContext = dbContext; 
         }

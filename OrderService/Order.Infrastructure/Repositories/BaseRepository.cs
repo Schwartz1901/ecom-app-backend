@@ -36,7 +36,7 @@ namespace Order.Infrastructure.Repositories
 
         public virtual async Task RemoveAsync(TId id)
         {
-            var t = await GetByIdAsync(id);
+            var t = await _dbSet.FindAsync(id);
             if (t is not null)
             {
                 _dbSet.Remove(t);

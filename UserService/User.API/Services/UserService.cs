@@ -3,6 +3,7 @@ using User.API.Interfaces;
 using User.Domain.Aggregates;
 using User.Domain.Aggregates.ValueObjects;
 using User.Domain.Repositories;
+using User.Domain.SeedWork;
 using User.Infrastructure;
 
 namespace User.API.Services
@@ -11,10 +12,12 @@ namespace User.API.Services
     {
         private readonly IUserRepository _userRepository;
         private readonly IHttpClientFactory _httpClientFactory;
-        public UserService(IUserRepository userRepository, IHttpClientFactory httpClientFactory) 
+        private readonly IUnitOfWork _unitOfWork;
+        public UserService(IUserRepository userRepository, IHttpClientFactory httpClientFactory, IUnitOfWork unitOfWork) 
         {
             _userRepository = userRepository;
             _httpClientFactory = httpClientFactory;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<UserDto> GetByIdAsync(Guid id)
@@ -51,16 +54,28 @@ namespace User.API.Services
 
         public async Task CreateUserAsync(CreateUserRequestDto request)
         {
-            var newUser = new UserAggregate(request.Username, request.Email);
-            var userId = await _userRepository.CreateUserAsync(newUser);
-
-            var client = _httpClientFactory.CreateClient("CartService");
-
-            var cartRequest = new { UserId = newUser.Id.Value };
-            var response = await client.PostAsJsonAsync("Cart", cartRequest);
-            if (!response.IsSuccessStatusCode)
+            await _unitOfWork.BeginTransactionAsync();
+            try
             {
-                throw new Exception("Cannot create cart");
+
+                var newUser = new UserAggregate(request.Username, request.Email);
+                var userId = await _userRepository.CreateUserAsync(newUser);
+
+                var client = _httpClientFactory.CreateClient("CartService");
+
+                var cartRequest = new { UserId = newUser.Id.Value };
+                var response = await client.PostAsJsonAsync("Cart", cartRequest);
+                if (!response.IsSuccessStatusCode)
+                {
+                    var error = await response.Content.ReadAsStringAsync();
+                    throw new Exception("Cannot create cart " + error);
+                }
+                await _unitOfWork.CommitAsync();
+            }
+            catch
+            {
+                await _unitOfWork.RollbackAsync();
+                throw;
             }
         }
 
@@ -71,8 +86,30 @@ namespace User.API.Services
 
         public async Task DeleteAsync(Guid id)
         {
+            await _unitOfWork.BeginTransactionAsync();
+            try
+            {
+                var client = _httpClientFactory.CreateClient("CartService");
+                var response = await client.DeleteAsync($"Cart/{id}");
 
+                if (!response.IsSuccessStatusCode)
+                {
+                    var error = await response.Content.ReadAsStringAsync();
+                    throw new Exception("Failed to delete cart: " + error);
+                };
+                var userId = new UserId(id);
+                await _userRepository.RemoveAsync(userId);
+
+                await _unitOfWork.CommitAsync();
+            }
+            catch
+            {
+                await _unitOfWork.RollbackAsync();
+                throw;
+            }
         }
+
+        
 
     }
 }
