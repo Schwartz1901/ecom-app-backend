@@ -1,7 +1,7 @@
 {
   "Routes": [
     {
-      "DownstreamPathTemplate": "/api/Product",
+      "DownstreamPathTemplate": "/api/Product/{everything}",
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
@@ -9,8 +9,8 @@
           "Port": 7001
         }
       ],
-      "UpstreamPathTemplate": "/product",
-      "UpstreamHttpMethod": [ "GET", "POST" ],
+      "UpstreamPathTemplate": "/product/{everything}",
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
       "QoSOptions": {
         "ExceptionsAllowedBeforeBreaking": 3,
         "DurationOfBreak": 10000,
@@ -21,29 +21,9 @@
         "RetryStatusCodes": [ 500, 502, 503, 504 ]
       }
     },
+   
     {
-      "DownstreamPathTemplate": "/api/Product/{id}",
-      "DownstreamScheme": "https",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 7001
-        }
-      ],
-      "UpstreamPathTemplate": "/product/{id}",
-      "UpstreamHttpMethod": [ "GET", "PUT", "DELETE" ],
-      "QoSOptions": {
-        "ExceptionsAllowedBeforeBreaking": 3,
-        "DurationOfBreak": 10000,
-        "TimeoutValue": 5000
-      },
-      "RetryOptions": {
-        "RetryCount": 3,
-        "RetryStatusCodes": [ 500, 502, 503, 504 ]
-      }
-    },
-    {
-      "DownstreamPathTemplate": "/api/Order/{id}",
+      "DownstreamPathTemplate": "/api/Order/{everything}",
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
@@ -51,8 +31,8 @@
           "Port": 7002
         }
       ],
-      "UpstreamPathTemplate": "/order/{id}",
-      "UpstreamHttpMethod": [ "GET" ],
+      "UpstreamPathTemplate": "/order/{everything}",
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
       "QoSOptions": {
         "ExceptionsAllowedBeforeBreaking": 3,
         "DurationOfBreak": 10000,
@@ -64,7 +44,7 @@
       }
     },
     {
-      "DownstreamPathTemplate": "/api/Cart",
+      "DownstreamPathTemplate": "/api/Cart/{everything}",
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
@@ -72,7 +52,7 @@
           "Port": 7003
         }
       ],
-      "UpstreamPathTemplate": "/cart",
+      "UpstreamPathTemplate": "/cart/{everything}",
       "UpstreamHttpMethod": [ "GET", "POST" ],
       "QoSOptions": {
         "ExceptionsAllowedBeforeBreaking": 3,
@@ -84,29 +64,9 @@
         "RetryStatusCodes": [ 500, 502, 503, 504 ]
       }
     },
+
     {
-      "DownstreamPathTemplate": "/api/Cart/{id}",
-      "DownstreamScheme": "https",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 7003
-        }
-      ],
-      "UpstreamPathTemplate": "/cart/{id}",
-      "UpstreamHttpMethod": [ "GET", "PUT", "DELETE" ],
-      "QoSOptions": {
-        "ExceptionsAllowedBeforeBreaking": 3,
-        "DurationOfBreak": 10000,
-        "TimeoutValue": 5000
-      },
-      "RetryOptions": {
-        "RetryCount": 3,
-        "RetryStatusCodes": [ 500, 502, 503, 504 ]
-      }
-    },
-    {
-      "DownstreamPathTemplate": "/api/User",
+      "DownstreamPathTemplate": "/api/User/{everything}",
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
@@ -114,8 +74,8 @@
           "Port": 7004
         }
       ],
-      "UpstreamPathTemplate": "/User",
-      "UpstreamHttpMethod": [ "GET", "POST" ],
+      "UpstreamPathTemplate": "/User/{everything}",
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
       "QoSOptions": {
         "ExceptionsAllowedBeforeBreaking": 4,
         "DurationOfBreak": 10000,
@@ -125,28 +85,8 @@
         "RetryCount": 3,
         "RetryStatusCodes": [ 500, 502, 503, 504 ]
       }
-    },
-    {
-      "DownstreamPathTemplate": "/api/User/{id}",
-      "DownstreamScheme": "https",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 7004
-        }
-      ],
-      "UpstreamPathTemplate": "/User/{id}",
-      "UpstreamHttpMethod": [ "GET", "DELETE" ],
-      "QoSOptions": {
-        "ExceptionsAllowedBeforeBreaking": 3,
-        "DurationOfBreak": 10000,
-        "TimeoutValue": 5000
-      },
-      "RetryOptions": {
-        "RetryCount": 3,
-        "RetryStatusCodes": [ 500, 502, 503, 504 ]
-      }
     }
+   
   ],
   "GlobalConfiguration": {
     "BaseUrl": "https://localhost:7123"

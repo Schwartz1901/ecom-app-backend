@@ -19,14 +19,15 @@ namespace Cart.Infrastructure
             modelBuilder.Entity<CartAggregate>(builder =>
             {
                 builder.ToTable("Carts");
+                builder.HasKey(c => c.CartUserId);
                 builder.Property(p => p.CartUserId).HasConversion
                 (
                     id => id.Value,
                     value => new CartUserId(value)
                 ).HasColumnName("Id").IsRequired();
-                builder.HasKey(c => c.CartUserId);
+                
 
-                builder.Ignore(c => c.CartItems);
+                
                 builder.OwnsMany(c => c.CartItems, item =>
                 {
                     item.WithOwner().HasForeignKey("CartId"); // Shadow FK
