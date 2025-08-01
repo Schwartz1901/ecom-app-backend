@@ -86,8 +86,30 @@ namespace User.API.Services
 
         public async Task DeleteAsync(Guid id)
         {
+            await _unitOfWork.BeginTransactionAsync();
+            try
+            {
+                var client = _httpClientFactory.CreateClient("CartService");
+                var response = await client.DeleteAsync($"Cart/{id}");
 
+                if (!response.IsSuccessStatusCode)
+                {
+                    var error = await response.Content.ReadAsStringAsync();
+                    throw new Exception("Failed to delete cart: " + error);
+                };
+                var userId = new UserId(id);
+                await _userRepository.RemoveAsync(userId);
+
+                await _unitOfWork.CommitAsync();
+            }
+            catch
+            {
+                await _unitOfWork.RollbackAsync();
+                throw;
+            }
         }
+
+        
 
     }
 }

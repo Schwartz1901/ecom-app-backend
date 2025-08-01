@@ -1,5 +1,4 @@
 ﻿using Cart.Domain.Aggregates.ValueObjects;
-using Order.Domain.Aggregates.Entities;
 
 using Cart.Domain.SeedWork;
 using System;

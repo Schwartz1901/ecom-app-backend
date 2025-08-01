@@ -5,10 +5,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Order.Domain.Aggregates.Entities
+namespace Cart.Domain.Aggregates.ValueObjects
 {
-    public class CartItem : Entity
+    public class CartItem : ValueObject
     {
+        public Guid ProductId { get; set; }
         public string Name { get; private set; }
         public string ImageUrl { get; private set; }
         public string ImageAlt { get; private set; }
@@ -16,7 +17,6 @@ namespace Order.Domain.Aggregates.Entities
         public double DiscountPrice { get; private set; }
         public bool Discount { get; private set; }
         public int Quantity { get; private set; }
-        public Guid ProductId { get; set; }
 
 
         private CartItem() { }  
@@ -32,6 +32,18 @@ namespace Order.Domain.Aggregates.Entities
             Discount = discount;
             Quantity = quantity;
             ProductId = productId;
+        }
+
+        protected override IEnumerable<object> GetEqualityComponents()
+        {
+            yield return ProductId;
+            yield return Name;
+            yield return ImageUrl;
+            yield return ImageAlt;
+            yield return NormalPrice;
+            yield return DiscountPrice;
+            yield return Discount;
+            yield return Quantity;
         }
 
         public void IncreaseQuantity(int quantity)

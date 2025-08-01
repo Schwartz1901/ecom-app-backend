@@ -45,5 +45,20 @@ namespace Cart.API.CartControllers {
                 return BadRequest(new { message = ex.Message });
             }
         }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete([FromRoute] Guid id)
+        {
+           try
+            {
+                await _cartService.DeleteAsync(id);
+                return Ok("Deleted");
+            }
+
+        catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
     }
 }

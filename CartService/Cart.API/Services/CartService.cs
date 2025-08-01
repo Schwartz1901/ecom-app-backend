@@ -52,7 +52,9 @@ namespace Cart.API.Services
         }
         public async Task DeleteAsync(Guid id)
         {
-
+            var cartId = new CartUserId(id);
+            await _cartRepository.RemoveAsync(cartId);
+            await _cartRepository.SaveChangesAsync();
         }
     }
 }
