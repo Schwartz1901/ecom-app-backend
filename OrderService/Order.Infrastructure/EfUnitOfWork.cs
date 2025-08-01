@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Order.Domain.SeedWork;
+using Order.Infrastructure.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,9 +12,9 @@ namespace Order.Infrastructure
 {
     public class EfUnitOfWork : IUnitOfWork
     {
-        private readonly DbContext _dbContext;
+        private readonly OrderDbContext _dbContext;
         private IDbContextTransaction? _currentTransaction;
-        public EfUnitOfWork(DbContext dbContext) 
+        public EfUnitOfWork(OrderDbContext dbContext) 
         { 
             _dbContext = dbContext; 
         }

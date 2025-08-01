@@ -39,8 +39,10 @@ namespace Cart.API.Services
        
         public async Task<bool> CreateAsync(Guid id)
         {
-            var newCart = new CartAggregate(new CartUserId(id));
+            var newCartId = new CartUserId(id);
+            var newCart = new CartAggregate(newCartId);
             await _cartRepository.AddAsync(newCart);
+            await _cartRepository.SaveChangesAsync();
             return true;
         }
 

@@ -5,12 +5,12 @@ using User.Domain.Repositories;
 using User.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
-
+builder.Services.AddControllers();
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("LocalDatabase");
 builder.Services.AddHttpClient("CartService", client =>
 {
-    client.BaseAddress = new Uri("https://localhost:7003/api");
+    client.BaseAddress = new Uri("https://localhost:7003/api/");
 });
 builder.Services.AddDbContext<UserDbContext>(options => options.UseSqlServer(connectionString));
 
@@ -29,6 +29,9 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthorization();
+
+app.MapControllers();
 
 
 app.Run();

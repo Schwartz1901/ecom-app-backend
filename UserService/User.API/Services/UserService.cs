@@ -60,7 +60,7 @@ namespace User.API.Services
             var response = await client.PostAsJsonAsync("Cart", cartRequest);
             if (!response.IsSuccessStatusCode)
             {
-                throw new Exception("Cannot create cart");
+                throw new Exception("Cannot create cart" + response.Content);
             }
         }
 
