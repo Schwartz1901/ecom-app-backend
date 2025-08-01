@@ -13,10 +13,7 @@ namespace Cart.API.CartControllers {
             _cartService = cartService;
         }
 
-        [HttpGet] 
-        public IActionResult Index() {
-            return Ok(Index());
-        }
+        
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById([FromRoute]Guid id)
