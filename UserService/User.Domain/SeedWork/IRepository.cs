@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Order.Domain.SeedWork
+namespace User.Domain.SeedWork
 {
     public interface IRepository<T, TId> where T : IAggregateRoot
     {

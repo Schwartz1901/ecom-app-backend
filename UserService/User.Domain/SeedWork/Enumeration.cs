@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Order.Domain.SeedWork
+namespace User.Domain.SeedWork
 {
     public abstract class Enumeration : IComparable
     {

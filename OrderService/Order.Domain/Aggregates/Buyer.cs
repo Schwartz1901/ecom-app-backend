@@ -1,5 +1,5 @@
 ﻿using Order.Domain.Aggregates.ValueObjects;
-using Product.Domain.SeedWork;
+using Order.Domain.SeedWork;
 using System;
 using System.Collections.Generic;
 using System.Linq;

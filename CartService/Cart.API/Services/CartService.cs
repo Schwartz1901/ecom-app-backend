@@ -2,6 +2,7 @@
 using Cart.API.Interfaces;
 using Cart.Domain.Aggregates.ValueObjects;
 using Cart.Domain.Repositories;
+using Order.Domain.Aggregates;
 
 namespace Cart.API.Services
 {
@@ -36,6 +37,13 @@ namespace Cart.API.Services
             return cartDto;
         }
        
+        public async Task<bool> CreateAsync(Guid id)
+        {
+            var newCart = new CartAggregate(new CartUserId(id));
+            await _cartRepository.AddAsync(newCart);
+            return true;
+        }
+
         public async Task UpdateAsync(CartDto cart)
         {
 

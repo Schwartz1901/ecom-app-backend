@@ -1,4 +1,4 @@
-﻿namespace Order.Domain.SeedWork
+﻿namespace User.Domain.SeedWork
 {
     public interface IUnitOfWork : IDisposable
     {

@@ -17,7 +17,7 @@ namespace Order.API.Controllers
         {
             try
             {
-                var result = await _orderService.GetById(id);
+                var result = await _orderService.GetByIdAsync(id);
                 return Ok(result);
             }
             catch (Exception ex)
