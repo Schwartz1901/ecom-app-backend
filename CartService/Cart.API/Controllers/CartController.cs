@@ -1,0 +1,48 @@
+﻿using Cart.API.Interfaces;
+using Microsoft.AspNetCore.Mvc;
+
+namespace Cart.API.CartControllers { 
+
+    [ApiController]
+    [Route("api/[controller]")]
+    public class CartController : ControllerBase
+    {
+        private readonly ICartService _cartService;
+        public CartController(ICartService cartService) {
+            _cartService = cartService;
+        }
+
+        [HttpGet] 
+        public IActionResult Index() {
+            return Ok(Index());
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetById([FromRoute]Guid id)
+        {
+            try
+            {
+                var result = await _cartService.GetByIdAsync(id);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new {message = ex.Message});
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Create(Guid id)
+        {
+            try
+            {
+                var result = await _cartService.CreateAsync(id);
+                return CreatedAtAction("GetById", result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+    }
+}
