@@ -9,11 +9,21 @@ builder.Configuration.AddJsonFile("ocelot.json", optional: false, reloadOnChange
 
 // Register Ocelot with Polly support
 builder.Services.AddOcelot(builder.Configuration)
-                .AddPolly(); // REQUIRED when using QoSOptions
+                .AddPolly();
 
+builder.WebHost.ConfigureKestrel(serverOptions =>
+{
+    serverOptions.ListenAnyIP(5025); // HTTP
+    serverOptions.ListenAnyIP(7123, listenOptions =>
+    {
+        listenOptions.UseHttps(); // Enable HTTPS
+    });
+});
 var app = builder.Build();
 
 // Make sure to await UseOcelot()
+app.UseHttpsRedirection();
 await app.UseOcelot();
+
 
 app.Run();
