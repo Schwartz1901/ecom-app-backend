@@ -48,5 +48,19 @@ namespace User.API.Controllers
 ;            }
 
         }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete([FromRoute] Guid id)
+        {
+            try
+            {
+                await _userService.DeleteAsync(id);
+                return Ok("Deleted");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
     }
 }
