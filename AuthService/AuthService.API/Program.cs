@@ -1,6 +1,24 @@
-var builder = WebApplication.CreateBuilder(args);
+using AuthService.Domain.Repositories;
+using AuthService.Domain.SeedWork;
+using AuthService.Infrastructure;
+using Microsoft.EntityFrameworkCore;
 
+
+var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddHttpClient("UserService", client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7004/api");
+});
+
+builder.Services.AddHttpClient("CartService", client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7003/api");
+});
 // Add services to the container.
+var connectionString = builder.Configuration.GetConnectionString("LocalDatabase");
+builder.Services.AddDbContext<AuthDbContext>(options => options.UseSqlServer(connectionString));
+
+builder.Services.AddScoped<IAuthUserRepository, AuthUserRepository>();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
@@ -14,28 +32,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
 
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast");
 
 app.Run();
 
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
+

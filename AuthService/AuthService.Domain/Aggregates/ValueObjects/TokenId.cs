@@ -1,0 +1,28 @@
+﻿using AuthService.Domain.SeedWork;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace AuthService.Domain.Aggregates.ValueObjects
+{
+    public class TokenId : ValueObject
+    {
+        public Guid Value { get; }
+
+        public TokenId(Guid value)
+        {
+            Value = value;
+        }
+
+        public static TokenId NewId() => new TokenId(Guid.NewGuid());
+
+        protected override IEnumerable<object> GetEqualityComponents()
+        {
+            yield return Value;
+        }
+
+        public override string ToString() => Value.ToString();
+    }
+}

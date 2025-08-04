@@ -11,6 +11,6 @@ namespace User.Domain.Repositories
 {
     public interface IUserRepository : IRepository<UserAggregate, UserId>
     {
-        Task<UserId> CreateUserAsync(UserAggregate user);
+        Task CreateUserAsync(UserAggregate user);
     }
 }
