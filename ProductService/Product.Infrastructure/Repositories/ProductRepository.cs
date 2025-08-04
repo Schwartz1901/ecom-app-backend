@@ -33,7 +33,7 @@ namespace Product.Infrastructure.Repositories
         }
         public async Task<List<ProductAggregate>> GetAllAsync()
         {
-            var products = await _dbContext.Products.ToListAsync();
+            var products = await _dbContext.Products.Include(p => p.Categories).ToListAsync();
             return products;
         }
         public async Task AddAsync(ProductAggregate product)

@@ -30,10 +30,10 @@ namespace Product.Domain.Aggregates
             Image = image ?? throw new ArgumentNullException(nameof(image));
             Categories = categories?.ToList() ?? throw new ArgumentNullException(nameof(categories));
         }
-        public static ProductAggregate Create(string name, string desc, double price, string imgUrl, string imgAlt, List<string> categoryNames)
+        public static ProductAggregate Create(string name, string desc, double normalPrice, double discountPrice, bool discount, string imgUrl, string imgAlt, List<string> categoryNames)
         {
             var id = new ProductId(Guid.NewGuid());
-            var priceVo = new Price(price, price, false);
+            var priceVo = new Price(normalPrice, discountPrice, discount);
             var image = new Image(imgUrl, imgAlt);
             var categories = categoryNames.Select(name => Enumeration.FromName<Category>(name)).ToList();
 

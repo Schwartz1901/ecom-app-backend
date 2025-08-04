@@ -10,7 +10,17 @@ builder.Configuration.AddJsonFile("ocelot.json", optional: false, reloadOnChange
 // Register Ocelot with Polly support
 builder.Services.AddOcelot(builder.Configuration)
                 .AddPolly();
-
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("Angular", policy =>
+    {
+        policy
+            .WithOrigins("http://localhost:4200") // Angular dev server
+            .AllowAnyMethod()
+            .AllowAnyHeader();
+        //.AllowCredentials();  cookies/auth
+    });
+});
 builder.WebHost.ConfigureKestrel(serverOptions =>
 {
     serverOptions.ListenAnyIP(5025); // HTTP
@@ -19,11 +29,12 @@ builder.WebHost.ConfigureKestrel(serverOptions =>
         listenOptions.UseHttps(); // Enable HTTPS
     });
 });
+
 var app = builder.Build();
 
 // Make sure to await UseOcelot()
 app.UseHttpsRedirection();
+app.UseCors("Angular");
 await app.UseOcelot();
-
 
 app.Run();
