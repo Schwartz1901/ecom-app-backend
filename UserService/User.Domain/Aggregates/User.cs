@@ -11,6 +11,7 @@ namespace User.Domain.Aggregates
     public class UserAggregate : IAggregateRoot
     {
         public UserId Id { get; private set; }
+        public Guid AuthId { get; private set; }
         public string Username { get; private set; }
         public string Email { get; private set; }
         public bool IsActive { get; private set; }
@@ -19,9 +20,10 @@ namespace User.Domain.Aggregates
         public string? PhoneNumber { get; private set; }
         public DateTime CreatedAt { get; private set; }
         private UserAggregate() { }
-        public UserAggregate( string username, string email)
+        public UserAggregate( Guid authId, string username, string email)
         {
             Id = UserId.NewId();
+            AuthId = authId;
             Username = username;
             Email = email;
             

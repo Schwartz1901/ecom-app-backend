@@ -57,9 +57,9 @@ namespace User.API.Services
             await _unitOfWork.BeginTransactionAsync();
             try
             {
-
-                var newUser = new UserAggregate(request.Username, request.Email);
-                var userId = await _userRepository.CreateUserAsync(newUser);
+                
+                var newUser = new UserAggregate(request.ID, request.Username, request.Email);
+                await _userRepository.CreateUserAsync(newUser);
 
                 var client = _httpClientFactory.CreateClient("CartService");
 

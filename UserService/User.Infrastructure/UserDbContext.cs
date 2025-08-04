@@ -22,11 +22,12 @@ namespace User.Infrastructure
                 builder.ToTable("Users");
 
                 builder.HasKey(u => u.Id);
+                
                 builder.Property(u => u.Id)
                     .HasConversion(id => id.Value, value => new UserId(value))
                     .HasColumnName("Id")
                     .IsRequired();
-            
+                builder.Property(u => u.AuthId).IsRequired();
                 builder.Property(u => u.Username).IsRequired();
                 builder.Property(u => u.Email).IsRequired();
                 builder.Property(u => u.PhoneNumber);
