@@ -16,15 +16,16 @@ namespace AuthService.Domain.Aggregates
         public string Username { get; private set; }
         public string PasswordHash { get; private set; }
         public string Role { get; private set; }
-
+        public string Email { get; private set; }
         private readonly List<RefreshToken> _refreshTokens = new();
         public IReadOnlyCollection<RefreshToken> RefreshTokens => _refreshTokens.AsReadOnly();
 
         private AuthUser() { } // for EF Core
 
-        public AuthUser( string username, string passwordHash, string role = "User")
+        public AuthUser( string username, string email, string passwordHash, string role = "User")
         {
             Id = AuthId.New();
+            Email = email;
             Username = username;
             PasswordHash = passwordHash;
             Role = role;
@@ -36,6 +37,16 @@ namespace AuthService.Domain.Aggregates
             _refreshTokens.Add(refreshToken);
         }
 
+        public void RevokeToken(string token)
+        {
+            var target = _refreshTokens.FirstOrDefault(rt => rt.Token == token);
+            if (target == null || !target.IsActive)
+            {
+                throw new Exception("Refresh token not found or already revoked.");
+            }
+
+            target.Revoke();
+        }
         public void RevokeAllTokens()
         {
             foreach (var token in _refreshTokens)
@@ -43,6 +54,7 @@ namespace AuthService.Domain.Aggregates
                 token.Revoke();
             }
         }
+
     }
 
 }

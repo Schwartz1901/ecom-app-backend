@@ -28,6 +28,7 @@ namespace AuthService.Infrastructure
                 auth.HasKey(a => a.Id);
                 auth.Property(a => a.Id).HasConversion(v => v.Value, id => new AuthId(id));
                 auth.Property(a => a.Username).IsRequired();
+                auth.Property(a => a.Email).IsRequired();
                 auth.Property(a => a.PasswordHash).IsRequired();
                 auth.Property(a => a.Role).IsRequired();
                 

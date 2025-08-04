@@ -12,5 +12,6 @@ namespace AuthService.Domain.Repositories
     public interface IAuthUserRepository : IRepository<AuthUser, AuthId>
     {
         Task<AuthUser> GetByName(string username);
+        Task<AuthUser?> GetByRefreshToken(string refreshToken);
     }
 }

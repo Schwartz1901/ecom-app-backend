@@ -1,6 +1,7 @@
 ﻿using AuthService.API.DTOs;
 using AuthService.API.Interfaces;
 using AuthService.Domain.Aggregates;
+using AuthService.Domain.Aggregates.ValueObjects;
 using AuthService.Domain.Entities;
 using AuthService.Domain.Repositories;
 using AuthService.Domain.SeedWork;
@@ -34,18 +35,19 @@ namespace AuthService.API.Services
         {
             var exists = await _authUserRepository.GetByName(request.Username);
             if (exists != null)
-            {
                 throw new Exception("User is already existed");
-            }
-            var userProfileClient = _httpClientFactory.CreateClient("UserService");
+
             var passwordHash = BCrypt.Net.BCrypt.HashPassword(request.Password);
+            var newUser = new AuthUser(request.Username, request.Email, passwordHash, "User");
+
+            var userProfileClient = _httpClientFactory.CreateClient("UserService");
+
             await _unitOfWork.BeginTransactionAsync();
+
             try
             {
-                var newUser = new AuthUser(request.Username, passwordHash, "User");
-
-               
-               var response = await userProfileClient.PostAsJsonAsync("User", new
+                await _authUserRepository.AddAsync(newUser);
+                var response = await userProfileClient.PostAsJsonAsync("User", new
                 {
                     ID = newUser.Id.ToString(),
                     Username = request.Username,
@@ -55,15 +57,15 @@ namespace AuthService.API.Services
                 if (!response.IsSuccessStatusCode)
                 {
                     var error = await response.Content.ReadAsStringAsync();
-                    throw new Exception(error);
+                    throw new Exception($"Failed to create user profile: {error}");
                 }
-                var token = GenerateAccessToken(newUser);
+
                 var refreshToken = GenerateRefreshToken();
                 newUser.AddRefreshToken(refreshToken.Token, refreshToken.ExpiresAt);
 
-                await _authUserRepository.AddAsync(newUser);
-
                 await _unitOfWork.CommitAsync();
+
+                var token = GenerateAccessToken(newUser);
 
                 return new AuthResponseDto
                 {
@@ -73,41 +75,128 @@ namespace AuthService.API.Services
                     Username = newUser.Username,
                     Email = request.Email,
                 };
-                
             }
             catch
             {
-               await  _unitOfWork.RollbackAsync();
+                await _unitOfWork.RollbackAsync();
                 throw;
             }
 
         }
+            
+
 
         public async Task<AuthResponseDto> LoginAsync(LoginDto request)
         {
+            // Check if user exists
+            var user = await _authUserRepository.GetByName(request.Email);
+            if (user == null || !BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
+            {
+                throw new Exception("Invalid username or password");
+            }
+
+            // Generate tokens
+            var token = GenerateAccessToken(user);
+            var refreshToken = GenerateRefreshToken();
+
+            // Add refresh token to user aggregate
+            user.AddRefreshToken(refreshToken.Token, refreshToken.ExpiresAt);
+
+            // Commit changes
+            await _unitOfWork.CommitAsync();
+
             return new AuthResponseDto
             {
-                Token = "",
-                RefreshToken = "",
-                AuthId = "",
-                Email = "",
-                Username = "",
+                Token = token,
+                RefreshToken = refreshToken.Token,
+                AuthId = user.Id.ToString(),
+                Username = user.Username,
+                Email = user.Email
             };
         }
 
-        public Task<AuthResponseDto> RefreshTokenAsync(string refreshToken)
+        public async Task<bool> LogoutAsync(Guid authId, string refreshToken)
         {
-            throw new NotImplementedException();
+            var id = new AuthId(authId);
+            var user = await _authUserRepository.GetByIdAsync(id);
+            if (user == null)
+            {
+                throw new Exception("User not found.");
+            }
+
+            user.RevokeToken(refreshToken);
+            await _unitOfWork.CommitAsync();
+
+            return true;
         }
 
-        public Task<bool> LogoutAsync(string userId)
+        public async Task<bool> DeleteUserAsync(Guid userId)
         {
-            throw new NotImplementedException();
+            var id = new AuthId(userId);
+            var user = await _authUserRepository.GetByIdAsync(id);
+            if (user == null)
+            {
+                throw new Exception("User not found");
+            }
+
+            var userProfileClient = _httpClientFactory.CreateClient("UserService");
+
+            // Start a DB transaction
+            await _unitOfWork.BeginTransactionAsync();
+
+            try
+            {
+                // Delete user from Auth DB
+                await _authUserRepository.RemoveAsync(id);
+
+                // Call UserService to delete profile
+                var response = await userProfileClient.DeleteAsync($"User/{userId}");
+                if (!response.IsSuccessStatusCode)
+                {
+                    var error = await response.Content.ReadAsStringAsync();
+                    throw new Exception($"Failed to delete profile from UserService: {error}");
+                }
+
+                await _unitOfWork.CommitAsync();
+                return true;
+            }
+            catch
+            {
+                await _unitOfWork.RollbackAsync();
+                throw;
+            }
         }
 
-        public Task<bool> DeleteUserAsync(string userId)
+        public async Task<AuthResponseDto> RefreshTokenAsync(string refreshToken)
         {
-            throw new NotImplementedException();
+            // Find the user that owns this token
+            var user = await _authUserRepository.GetByRefreshToken(refreshToken);
+            if (user == null)
+                throw new Exception("Invalid refresh token");
+
+            var tokenEntity = user.RefreshTokens.FirstOrDefault(rt => rt.Token == refreshToken);
+            if (tokenEntity == null || !tokenEntity.IsActive)
+                throw new Exception("Refresh token is expired or revoked");
+
+            // Revoke the old token (rotation)
+            tokenEntity.Revoke();
+
+            // Generate new tokens
+            var newAccessToken = GenerateAccessToken(user);
+            var newRefreshToken = GenerateRefreshToken();
+
+            user.AddRefreshToken(newRefreshToken.Token, newRefreshToken.ExpiresAt);
+
+            await _unitOfWork.CommitAsync();
+
+            return new AuthResponseDto
+            {
+                Token = newAccessToken,
+                RefreshToken = newRefreshToken.Token,
+                AuthId = user.Id.ToString(),
+                Username = user.Username,
+                Email = user.Email
+            };
         }
 
         /// <summary>
