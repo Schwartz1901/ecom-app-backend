@@ -75,12 +75,14 @@ namespace Product.API.Services
 
         public async Task AddAsync(ProductDto dto)
         {
-
+            
             var productAggregate = ProductAggregate.Create(
 
                 dto.Name,
                 dto.Description,
                 dto.Price,
+                dto.DiscountPrice,
+                dto.IsDiscount,
                 dto.ImageUrl,
                 dto.ImageAlt,
                 dto.Categories
