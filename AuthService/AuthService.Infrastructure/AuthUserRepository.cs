@@ -32,5 +32,12 @@ namespace AuthService.Infrastructure
             .Include(u => u.RefreshTokens)
             .FirstOrDefaultAsync(u => u.RefreshTokens.Any(rt => rt.Token == token));
         }
+
+        public async Task<AuthUser?> GetByEmail(string email)
+        {
+            return await _dbSet
+                .Include(u => u.RefreshTokens)
+                .FirstOrDefaultAsync(u => u.Email == email);
+        }
     }
 }

@@ -95,7 +95,7 @@
           "Port": 7005
         }
       ],
-      "UpstreamPathTemplate": "/Auth/{everything}",
+      "UpstreamPathTemplate": "/auth/{everything}",
       "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
       "QoSOptions": {
         "ExceptionsAllowedBeforeBreaking": 4,

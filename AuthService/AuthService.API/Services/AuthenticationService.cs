@@ -88,13 +88,11 @@ namespace AuthService.API.Services
             }
 
         }
-            
-
 
         public async Task<AuthResponseDto> LoginAsync(LoginDto request)
         {
             // Check if user exists
-            var user = await _authUserRepository.GetByName(request.Email);
+            var user = await _authUserRepository.GetByEmail(request.Email);
             if (user == null || !BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
             {
                 throw new Exception("Invalid username or password");
@@ -120,16 +118,16 @@ namespace AuthService.API.Services
             };
         }
 
-        public async Task<bool> LogoutAsync(Guid authId, string refreshToken)
+        public async Task<bool> LogoutAsync(LogoutDto logoutDto)
         {
-            var id = new AuthId(authId);
-            var user = await _authUserRepository.GetByIdAsync(id);
+            var authId = new AuthId(logoutDto.Id);
+            var user = await _authUserRepository.GetByIdAsync(authId);
             if (user == null)
             {
                 throw new Exception("User not found.");
             }
 
-            user.RevokeToken(refreshToken);
+            user.RevokeToken(logoutDto.RefreshToken);
             await _unitOfWork.CommitAsync();
 
             return true;

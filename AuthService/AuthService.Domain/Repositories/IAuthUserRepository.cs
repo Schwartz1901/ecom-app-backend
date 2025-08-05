@@ -13,5 +13,6 @@ namespace AuthService.Domain.Repositories
     {
         Task<AuthUser> GetByName(string username);
         Task<AuthUser?> GetByRefreshToken(string refreshToken);
+        Task<AuthUser?> GetByEmail(string email);
     }
 }
