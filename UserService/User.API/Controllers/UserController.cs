@@ -44,7 +44,7 @@ namespace User.API.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(new { message = ex.Message })
+                return BadRequest(new {source="User service", message = ex.Message })
 ;            }
 
         }

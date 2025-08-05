@@ -18,12 +18,12 @@ namespace AuthService.API.Controllers
         {
             try
             {
-                var result = _authService.RegisterAsync(dto);
+                var result = await _authService.RegisterAsync(dto);
                 return Ok(result);
             }
             catch (Exception ex)
             {
-                return BadRequest(new {message = ex.Message});
+                return BadRequest(new {source= "Auth service", message = ex.Message});
             }
         }
     }

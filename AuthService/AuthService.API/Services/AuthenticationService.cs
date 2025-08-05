@@ -14,13 +14,13 @@ using System.Text;
 
 namespace AuthService.API.Services
 {
-    public class AuthService : IAuthService
+    public class AuthenticationService : IAuthService
     {
         private readonly IAuthUserRepository _authUserRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly IConfiguration _config;
-        public AuthService(IAuthUserRepository authUserRepository,
+        public AuthenticationService(IAuthUserRepository authUserRepository,
             IUnitOfWork unitOfWork,
             IHttpClientFactory httpClientFactory,
             IConfiguration config)
@@ -39,7 +39,7 @@ namespace AuthService.API.Services
 
             var passwordHash = BCrypt.Net.BCrypt.HashPassword(request.Password);
             var newUser = new AuthUser(request.Username, request.Email, passwordHash, "User");
-
+         
             var userProfileClient = _httpClientFactory.CreateClient("UserService");
 
             await _unitOfWork.BeginTransactionAsync();
@@ -51,7 +51,7 @@ namespace AuthService.API.Services
                 {
                     ID = newUser.Id.ToString(),
                     Username = request.Username,
-                    Mail = request.Email,
+                    Email = request.Email,
                 });
 
                 if (!response.IsSuccessStatusCode)
@@ -64,9 +64,14 @@ namespace AuthService.API.Services
                 newUser.AddRefreshToken(refreshToken.Token, refreshToken.ExpiresAt);
 
                 await _unitOfWork.CommitAsync();
-
+                
+                Console.WriteLine($"RefreshToken = {refreshToken?.Token ?? "NULL"}");
+                Console.WriteLine($"AuthId = {newUser.Id}");
+                Console.WriteLine($"Username = {newUser.Username ?? "NULL"}");
+                Console.WriteLine($"Email = {newUser.Email ?? "NULL"}");
+                Console.WriteLine($"Email = {newUser.Role ?? "NULL"}");
                 var token = GenerateAccessToken(newUser);
-
+               
                 return new AuthResponseDto
                 {
                     Token = token,
@@ -211,6 +216,7 @@ namespace AuthService.API.Services
             new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
             new Claim("username", user.Username),
             new Claim(ClaimTypes.Role, user.Role),
+            new Claim(ClaimTypes.Email, user.Email),
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
         };
 

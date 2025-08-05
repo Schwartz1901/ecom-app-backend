@@ -9,8 +9,9 @@ namespace AuthService.Domain.Aggregates.ValueObjects
 {
     public class AuthId : ValueObject
     {
-        public Guid Value { get; }
+        public Guid Value { get; private set; }
 
+        private AuthId() { }
         public AuthId(Guid value)
         {
             Value = value;

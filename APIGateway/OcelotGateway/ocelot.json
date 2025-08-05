@@ -85,6 +85,27 @@
         "RetryCount": 3,
         "RetryStatusCodes": [ 500, 502, 503, 504 ]
       }
+    },
+    {
+      "DownstreamPathTemplate": "/api/Auth/{everything}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7005
+        }
+      ],
+      "UpstreamPathTemplate": "/Auth/{everything}",
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
+      "QoSOptions": {
+        "ExceptionsAllowedBeforeBreaking": 4,
+        "DurationOfBreak": 10000,
+        "TimeoutValue": 10000
+      },
+      "RetryOptions": {
+        "RetryCount": 3,
+        "RetryStatusCodes": [ 500, 502, 503, 504 ]
+      }
     }
    
   ],
