@@ -1,4 +1,5 @@
 ﻿using User.API.DTOs;
+using User.Domain.Aggregates.ValueObjects;
 
 namespace User.API.Interfaces
 {
@@ -6,7 +7,7 @@ namespace User.API.Interfaces
     {
         Task<UserDto> GetByIdAsync(Guid id);
         Task<List<UserDto>> GetAllAsync();
-        Task CreateUserAsync(CreateUserRequestDto createRequest);
+        Task<Guid> CreateUserAsync(CreateUserRequestDto createRequest);
         Task UpdateAsync(UpdateInformationDto updateInfo);
         Task DeleteAsync(Guid id);
     }

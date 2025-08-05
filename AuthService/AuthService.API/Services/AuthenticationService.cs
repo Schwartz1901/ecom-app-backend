@@ -59,19 +59,15 @@ namespace AuthService.API.Services
                     var error = await response.Content.ReadAsStringAsync();
                     throw new Exception($"Failed to create user profile: {error}");
                 }
-
+                
                 var refreshToken = GenerateRefreshToken();
                 newUser.AddRefreshToken(refreshToken.Token, refreshToken.ExpiresAt);
 
                 await _unitOfWork.CommitAsync();
                 
-                Console.WriteLine($"RefreshToken = {refreshToken?.Token ?? "NULL"}");
-                Console.WriteLine($"AuthId = {newUser.Id}");
-                Console.WriteLine($"Username = {newUser.Username ?? "NULL"}");
-                Console.WriteLine($"Email = {newUser.Email ?? "NULL"}");
-                Console.WriteLine($"Email = {newUser.Role ?? "NULL"}");
+                
                 var token = GenerateAccessToken(newUser);
-               
+
                 return new AuthResponseDto
                 {
                     Token = token,

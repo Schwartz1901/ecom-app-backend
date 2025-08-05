@@ -52,7 +52,7 @@ namespace User.API.Services
             }).ToList();
         }
 
-        public async Task CreateUserAsync(CreateUserRequestDto request)
+        public async Task<Guid> CreateUserAsync(CreateUserRequestDto request)
         {
             await _unitOfWork.BeginTransactionAsync();
             try
@@ -71,6 +71,7 @@ namespace User.API.Services
                     throw new Exception("Cannot create cart " + error);
                 }
                 await _unitOfWork.CommitAsync();
+                return newUser.Id.Value;
             }
             catch
             {

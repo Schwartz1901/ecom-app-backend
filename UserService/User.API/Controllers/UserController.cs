@@ -39,8 +39,8 @@ namespace User.API.Controllers
         {
             try
             {
-                await _userService.CreateUserAsync(request);
-                return Ok("Created");
+                var result = await _userService.CreateUserAsync(request);
+                return Ok(result);
             }
             catch (Exception ex)
             {
