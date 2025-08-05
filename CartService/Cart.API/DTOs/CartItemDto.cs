@@ -12,4 +12,11 @@
         public string ProductName { get; set; } 
         public double TotalPrice { get; set; }
     }
+
+
+    public class AddCartItemDto
+    {
+        public Guid ProductId { get; set; }
+        public int Quantity { get; set; }
+    }
 }

@@ -19,9 +19,12 @@
       "RetryOptions": {
         "RetryCount": 3,
         "RetryStatusCodes": [ 500, 502, 503, 504 ]
+      },
+      "AddHeadersToDownstream": {
+        "Authorization": "{Authorization}"
       }
     },
-   
+
     {
       "DownstreamPathTemplate": "/api/Order/{everything}",
       "DownstreamScheme": "https",
@@ -41,6 +44,9 @@
       "RetryOptions": {
         "RetryCount": 3,
         "RetryStatusCodes": [ 500, 502, 503, 504 ]
+      },
+      "AddHeadersToDownstream": {
+        "Authorization": "{Authorization}"
       }
     },
     {
@@ -62,6 +68,9 @@
       "RetryOptions": {
         "RetryCount": 3,
         "RetryStatusCodes": [ 500, 502, 503, 504 ]
+      },
+      "AddHeadersToDownstream": {
+        "Authorization": "{Authorization}" 
       }
     },
 
@@ -84,6 +93,9 @@
       "RetryOptions": {
         "RetryCount": 3,
         "RetryStatusCodes": [ 500, 502, 503, 504 ]
+      },
+      "AddHeadersToDownstream": {
+        "Authorization": "{Authorization}"
       }
     },
     {
@@ -111,5 +123,6 @@
   ],
   "GlobalConfiguration": {
     "BaseUrl": "https://localhost:7123"
-  }
+  },
+
 }

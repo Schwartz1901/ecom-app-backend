@@ -41,31 +41,48 @@ namespace AuthService.API.Services
             var newUser = new AuthUser(request.Username, request.Email, passwordHash, "User");
          
             var userProfileClient = _httpClientFactory.CreateClient("UserService");
+            var cartClient = _httpClientFactory.CreateClient("CartService");
 
             await _unitOfWork.BeginTransactionAsync();
 
             try
             {
+               
                 await _authUserRepository.AddAsync(newUser);
-                var response = await userProfileClient.PostAsJsonAsync("User", new
+
+                // Create user profile at UserService
+                var userResponse = await userProfileClient.PostAsJsonAsync("User", new
                 {
                     ID = newUser.Id.ToString(),
                     Username = request.Username,
                     Email = request.Email,
                 });
 
-                if (!response.IsSuccessStatusCode)
+               
+                if (!userResponse.IsSuccessStatusCode)
                 {
-                    var error = await response.Content.ReadAsStringAsync();
+                    var error = await userResponse.Content.ReadAsStringAsync();
                     throw new Exception($"Failed to create user profile: {error}");
                 }
+                // Create Cart at CartService
+                var cartResponse = await cartClient.PostAsJsonAsync("Cart", new
+                {
+                    UserId = newUser.Id.Value
+                });
+
+                if (!cartResponse.IsSuccessStatusCode)
+                {
+                    var error = await userResponse.Content.ReadAsStringAsync();
+                    throw new Exception($"Failed to create Cart: {error}");
+                }
                 
+                // Create RefreshToken and add to AuthUser
                 var refreshToken = GenerateRefreshToken();
                 newUser.AddRefreshToken(refreshToken.Token, refreshToken.ExpiresAt);
 
                 await _unitOfWork.CommitAsync();
                 
-                
+                // Create AccessTokken (JWT)
                 var token = GenerateAccessToken(newUser);
 
                 return new AuthResponseDto

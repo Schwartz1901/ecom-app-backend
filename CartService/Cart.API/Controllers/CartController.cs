@@ -1,5 +1,6 @@
 ﻿using Cart.API.DTOs;
 using Cart.API.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Cart.API.CartControllers { 
@@ -12,8 +13,6 @@ namespace Cart.API.CartControllers {
         public CartController(ICartService cartService) {
             _cartService = cartService;
         }
-
-        
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById([FromRoute]Guid id)
@@ -42,6 +41,24 @@ namespace Cart.API.CartControllers {
                 return BadRequest(new {source= "Cart service", message = ex.Message });
             }
         }
+        
+        [HttpPost("items")]
+        public async Task<IActionResult> AddItemToCart([FromBody] AddCartItemDto dto)
+        {
+            try
+            {
+                var authId = User.FindFirst("sub")?.Value;
+                if (authId == null) {
+                    return Unauthorized();
+                }
+                await _cartService.AddItemToCartAsync(authId, dto);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete([FromRoute] Guid id)
@@ -57,5 +74,7 @@ namespace Cart.API.CartControllers {
                 return BadRequest(new { message = ex.Message });
             }
         }
+
+
     }
 }

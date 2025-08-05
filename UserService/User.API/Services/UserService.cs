@@ -61,15 +61,6 @@ namespace User.API.Services
                 var newUser = new UserAggregate(request.ID, request.Username, request.Email);
                 await _userRepository.CreateUserAsync(newUser);
 
-                var client = _httpClientFactory.CreateClient("CartService");
-
-                var cartRequest = new { UserId = newUser.Id.Value };
-                var response = await client.PostAsJsonAsync("Cart", cartRequest);
-                if (!response.IsSuccessStatusCode)
-                {
-                    var error = await response.Content.ReadAsStringAsync();
-                    throw new Exception("Cannot create cart " + error);
-                }
                 await _unitOfWork.CommitAsync();
                 return newUser.Id.Value;
             }
@@ -80,9 +71,9 @@ namespace User.API.Services
             }
         }
 
-        public async Task UpdateAsync(UpdateInformationDto updateInfo)
+        public  Task UpdateAsync(UpdateInformationDto updateInfo)
         {
-
+            throw new NotImplementedException();
         }
 
         public async Task DeleteAsync(Guid id)
@@ -90,17 +81,9 @@ namespace User.API.Services
             await _unitOfWork.BeginTransactionAsync();
             try
             {
-                var client = _httpClientFactory.CreateClient("CartService");
-                var response = await client.DeleteAsync($"Cart/{id}");
-
-                if (!response.IsSuccessStatusCode)
-                {
-                    var error = await response.Content.ReadAsStringAsync();
-                    throw new Exception("Failed to delete cart: " + error);
-                };
+                
                 var userId = new UserId(id);
                 await _userRepository.RemoveAsync(userId);
-
                 await _unitOfWork.CommitAsync();
             }
             catch
