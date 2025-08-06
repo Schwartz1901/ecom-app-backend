@@ -9,5 +9,7 @@ namespace Cart.API.Interfaces
         Task UpdateAsync(CartDto cart);
         Task DeleteAsync(Guid id);
         Task AddItemToCartAsync(string authId, AddCartItemDto dto);
+
+        Task RemoveItemAsync(string authId, string itemId);
     }
 }

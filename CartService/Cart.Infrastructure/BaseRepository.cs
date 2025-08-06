@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Order.Infrastructure.Repositories
+namespace Cart.Infrastructure
 {
     public abstract class BaseRepository<T, TId> : IRepository<T, TId> where T : class, IAggregateRoot
     {

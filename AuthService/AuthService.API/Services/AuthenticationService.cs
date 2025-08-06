@@ -51,30 +51,30 @@ namespace AuthService.API.Services
                 await _authUserRepository.AddAsync(newUser);
 
                 // Create user profile at UserService
-                var userResponse = await userProfileClient.PostAsJsonAsync("User", new
-                {
-                    ID = newUser.Id.ToString(),
-                    Username = request.Username,
-                    Email = request.Email,
-                });
+                //var userResponse = await userProfileClient.PostAsJsonAsync("User", new
+                //{
+                //    ID = newUser.Id.ToString(),
+                //    Username = request.Username,
+                //    Email = request.Email,
+                //});
 
                
-                if (!userResponse.IsSuccessStatusCode)
-                {
-                    var error = await userResponse.Content.ReadAsStringAsync();
-                    throw new Exception($"Failed to create user profile: {error}");
-                }
+                //if (!userResponse.IsSuccessStatusCode)
+                //{
+                //    var error = await userResponse.Content.ReadAsStringAsync();
+                //    throw new Exception($"Failed to create user profile: {error}");
+                //}
                 // Create Cart at CartService
-                var cartResponse = await cartClient.PostAsJsonAsync("Cart", new
-                {
-                    UserId = newUser.Id.Value
-                });
+                //var cartResponse = await cartClient.PostAsJsonAsync("Cart", new
+                //{
+                //    UserId = newUser.Id.Value
+                //});
 
-                if (!cartResponse.IsSuccessStatusCode)
-                {
-                    var error = await userResponse.Content.ReadAsStringAsync();
-                    throw new Exception($"Failed to create Cart: {error}");
-                }
+                //if (!cartResponse.IsSuccessStatusCode)
+                //{
+                //    var error = await userResponse.Content.ReadAsStringAsync();
+                //    throw new Exception($"Failed to create Cart: {error}");
+                //}
                 
                 // Create RefreshToken and add to AuthUser
                 var refreshToken = GenerateRefreshToken();
@@ -225,11 +225,12 @@ namespace AuthService.API.Services
             var claims = new[]
             {
             new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
+            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
             new Claim("username", user.Username),
             new Claim(ClaimTypes.Role, user.Role),
             new Claim(ClaimTypes.Email, user.Email),
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-        };
+            };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]!));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);

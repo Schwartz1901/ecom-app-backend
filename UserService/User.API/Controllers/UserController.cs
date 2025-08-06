@@ -1,8 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System.Runtime.InteropServices;
 using User.API.DTOs;
 using User.API.Interfaces;
-
+using System.Security.Claims;
 namespace User.API.Controllers
 {
     [ApiController]
@@ -20,13 +21,16 @@ namespace User.API.Controllers
         {
             return Ok("Hello From User");
         }
-
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById([FromRoute] Guid id)
         {
+            var aid = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var username = User.FindFirst("username")?.Value;
+            var email = User.FindFirst(ClaimTypes.Email)?.Value;
             try
             {
-                var user = await _userService.GetByIdAsync(id);
+                var user = await _userService.GetByIdAsync(id, aid, username, email);
                 return Ok(user);
             }
             catch (Exception ex)

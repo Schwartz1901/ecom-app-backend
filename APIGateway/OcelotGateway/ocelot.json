@@ -22,6 +22,9 @@
       },
       "AddHeadersToDownstream": {
         "Authorization": "{Authorization}"
+      },
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
       }
     },
 
@@ -47,6 +50,9 @@
       },
       "AddHeadersToDownstream": {
         "Authorization": "{Authorization}"
+      },
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
       }
     },
     {
@@ -59,7 +65,7 @@
         }
       ],
       "UpstreamPathTemplate": "/cart/{everything}",
-      "UpstreamHttpMethod": [ "GET", "POST" ],
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
       "QoSOptions": {
         "ExceptionsAllowedBeforeBreaking": 3,
         "DurationOfBreak": 10000,
@@ -70,7 +76,10 @@
         "RetryStatusCodes": [ 500, 502, 503, 504 ]
       },
       "AddHeadersToDownstream": {
-        "Authorization": "{Authorization}" 
+        "Authorization": "{Authorization}"
+      },
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
       }
     },
 
@@ -96,6 +105,9 @@
       },
       "AddHeadersToDownstream": {
         "Authorization": "{Authorization}"
+      },
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
       }
     },
     {

@@ -20,13 +20,16 @@ namespace User.API.Services
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<UserDto> GetByIdAsync(Guid id)
+        public async Task<UserDto> GetByIdAsync(Guid id, string aid, string username, string email)
         {
             var userId = new UserId(id);
             var user = await _userRepository.GetByIdAsync(userId);
             if (user == null)
             {
-                throw new KeyNotFoundException("User not found");
+                user = new UserAggregate(Guid.Parse(aid), username, email);
+                await _userRepository.AddAsync(user);
+                await _unitOfWork.SaveChangesAsync();
+
             }
             return new UserDto
             {

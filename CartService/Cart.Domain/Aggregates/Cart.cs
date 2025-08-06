@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Order.Domain.Aggregates
+namespace Cart.Domain.Aggregates
 {
     public class CartAggregate : Entity, IAggregateRoot
     {
@@ -34,8 +34,9 @@ namespace Order.Domain.Aggregates
             }
         }
 
-        public void RemoveItem(CartItem item)
+        public void RemoveItem(Guid id)
         {
+            var item = CartItems.FirstOrDefault(i => i.ProductId == id);
             _cartItems.Remove(item);
         }
         public void ClearCart()

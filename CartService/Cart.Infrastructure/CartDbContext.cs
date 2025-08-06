@@ -1,6 +1,6 @@
 ﻿using Cart.Domain.Aggregates.ValueObjects;
 using Microsoft.EntityFrameworkCore;
-using Order.Domain.Aggregates;
+using Cart.Domain.Aggregates;
 using System;
 using System.Collections.Generic;
 using System.Linq;

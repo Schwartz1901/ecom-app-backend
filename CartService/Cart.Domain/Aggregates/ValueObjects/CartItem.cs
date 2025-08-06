@@ -55,7 +55,8 @@ namespace Cart.Domain.Aggregates.ValueObjects
 
         public double GetCurrentPrice()
         {
-            return (Discount ? DiscountPrice : NormalPrice) * Quantity;
+            var unitPrice = Discount ? DiscountPrice : NormalPrice;
+            return unitPrice * Quantity;
         }
 
         

@@ -4,7 +4,7 @@ using Cart.Domain.Aggregates.ValueObjects;
 using Cart.Domain.Repositories;
 using Cart.Domain.SeedWork;
 using MediatR;
-using Order.Domain.Aggregates;
+using Cart.Domain.Aggregates;
 using System.Net.WebSockets;
 
 namespace Cart.API.Services
@@ -23,22 +23,28 @@ namespace Cart.API.Services
         public async Task<CartDto> GetByIdAsync(Guid id)
         {
             var cartId = new CartUserId(id);
-            var result = await _cartRepository.GetByIdAsync(cartId);
-
+            var cart = await _cartRepository.GetByIdAsync(cartId);
+            if (cart == null)
+            {
+                cart = new CartAggregate(cartId);
+                await _cartRepository.AddAsync(cart);
+                await _unitOfWork.SaveChangesAsync();
+            }
             var cartDto = new CartDto
             {
-                CartItems = result.CartItems.Select(item => new CartItemDto
+                CartItems = cart.CartItems.Select(item => new CartItemDto
                 {
+                    Id = item.ProductId,
                     Quantity = item.Quantity,
                     ImageUrl = item.ImageUrl,
                     ImageAlt = item.ImageAlt,
-                    NormalPrice = item.NormalPrice,
+                    Price = item.NormalPrice,
                     DiscountPrice = item.DiscountPrice,
-                    Discount = item.Discount,
-                    ProductName = item.Name,
+                    IsDiscount = item.Discount,
+                    Name = item.Name,
                     TotalPrice = item.GetCurrentPrice(),
                 }).ToList(),
-                CartPrice = result.GetTotalPrice(),
+                CartPrice = cart.GetTotalPrice(),
             };
 
             return cartDto;
@@ -69,30 +75,43 @@ namespace Cart.API.Services
             var cartId = new CartUserId(Guid.Parse(authId));
             var cart = await _cartRepository.GetByIdAsync(cartId);
             if (cart == null) 
-            { 
-                throw new KeyNotFoundException(nameof(cart));
+            {
+                cart = new CartAggregate(cartId);
+                await _cartRepository.AddAsync(cart);
+                
             }
             var client = _httpClientFactory.CreateClient("ProductService");
 
-            var response = await client.GetAsync($"/Product/{dto.ProductId}");
+            var response = await client.GetAsync($"/api/Product/{dto.ProductId}");
             if (!response.IsSuccessStatusCode)
             {
-                throw new KeyNotFoundException($"No Product with Id {dto.ProductId}");
+                var error = await response.Content.ReadAsStringAsync();
+                throw new Exception(error);
             }
 
             var cartItemDto = await response.Content.ReadFromJsonAsync<CartItemDto>();
-          
-            var cartItem = new CartItem(cartItemDto.ProductName, 
+            
+            var cartItem = new CartItem(cartItemDto!.Name, 
                 cartItemDto.ImageUrl, cartItemDto.ImageAlt, 
-                cartItemDto.NormalPrice, 
+                cartItemDto.Price, 
                 cartItemDto.DiscountPrice, 
-                cartItemDto.Discount, 
+                cartItemDto.IsDiscount, 
                 dto.Quantity, 
                 dto.ProductId);
           
             cart.AddItem(cartItem);
             await _unitOfWork.SaveChangesAsync(); 
 
+        }
+
+        public async Task RemoveItemAsync(string authId, string itemId)
+        {
+            var cartUserId = new CartUserId(Guid.Parse(authId));
+            var cart = await _cartRepository.GetByIdAsync(cartUserId);
+
+            var productId = Guid.Parse(itemId);
+            cart.RemoveItem(productId);
+            await _unitOfWork.SaveChangesAsync();
         }
     }
 }
