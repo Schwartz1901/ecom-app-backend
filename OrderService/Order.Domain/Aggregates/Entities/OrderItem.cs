@@ -9,6 +9,7 @@ namespace Order.Domain.Aggregates.Entities
 {
     public class OrderItem : Entity
     {
+        public Guid ProductId { get; set; }
         public string Name { get; private set; }
         public string ImageUrl { get; private set; }
         public string ImageAlt { get; private set; }
@@ -16,7 +17,7 @@ namespace Order.Domain.Aggregates.Entities
         public double DiscountPrice { get; private set; }
         public bool Discount { get; private set; }
         public int Quantity { get; private set; }
-        public Guid ProductId { get; set; }
+        
         private OrderItem() { }
 
         public OrderItem(string name, string imageUrl, string imageAlt, double normalPrice, double discountprice, bool discount, int quantity, Guid productId)

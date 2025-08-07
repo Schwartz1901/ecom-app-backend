@@ -4,6 +4,10 @@ using Order.Domain.Aggregates.ValueObjects;
 using Order.Domain.Repositories;
 using Order.Infrastructure.Repositories;
 using Order.Domain.SeedWork;
+using System.Net.Http.Headers;
+using Order.Domain.Aggregates.Entities;
+using Order.Domain.Aggregates;
+using Order.Domain.Aggregates.Enumerations;
 
 namespace Order.API.Services
 {
@@ -11,10 +15,19 @@ namespace Order.API.Services
     {
         private readonly IOrderRepository _orderRepository;
         private readonly IUnitOfWork _unitOfWork;
-        public OrderService(IOrderRepository orderRepository, IUnitOfWork unitOfWork) 
+        private readonly IHttpClientFactory _httpClientFactory;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        public OrderService(
+            IOrderRepository orderRepository, 
+            IUnitOfWork unitOfWork, 
+            IHttpClientFactory httpClientFactory,
+            IHttpContextAccessor httpContextAccessor
+            ) 
         {
             _orderRepository = orderRepository;
             _unitOfWork = unitOfWork;
+            _httpClientFactory = httpClientFactory;
+            _httpContextAccessor = httpContextAccessor;
         }
         public async Task<OrderDto> GetByIdAsync(Guid id)
         {
@@ -65,18 +78,72 @@ namespace Order.API.Services
 
             return orderDtos;
         }
-        public async Task AddAsync(OrderDto orderDto)
+        public Task AddAsync(OrderDto orderDto)
         {
-            // TODO: Add Order with BuyerId and Fetch data from CartService
+            throw new NotImplementedException();
         }
-        public async Task UpdateAsync(OrderDto orderDto)
+        public Task UpdateAsync(OrderDto orderDto)
         {
             // TODO: Update Order
+            throw new NotImplementedException();
         }
-        public async Task DeleteAsync(Guid id)
+        public Task DeleteAsync(Guid id)
         {
+            throw new NotImplementedException();
             // TODO: Delete Order
 
+        }
+
+        public async Task CheckoutAsync(string userId, AddressDto addressDto, string description)
+        {
+            var cartClient = _httpClientFactory.CreateClient("CartService");
+            var request = new HttpRequestMessage(HttpMethod.Get, "/api/Cart");
+
+            var jwt = _httpContextAccessor.HttpContext?.Request.Headers["Authorization"].ToString();
+            var token = jwt?.Replace("Bearer ", "");
+
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            await _unitOfWork.BeginTransactionAsync();
+            try
+            {
+
+                var cartResponse = await cartClient.SendAsync(request);
+                if (!cartResponse.IsSuccessStatusCode)
+                {
+                    var error = cartResponse.Content.ReadAsStringAsync();
+                    throw new Exception("Error at CartService: " + error);
+
+                }
+                var cart = await cartResponse.Content.ReadFromJsonAsync<CartDto>();
+                var address = new Address(
+                    addressDto.Street, 
+                    addressDto.City, 
+                    addressDto.Ward, 
+                    addressDto.Country, 
+                    addressDto.ZipCode);
+
+                var orderItems = cart.CartItems.Select(i => new OrderItem
+                    (
+                        i.Name,
+                        i.ImageUrl,
+                        i.ImageAlt,
+                        i.Price,
+                        i.DiscountPrice,
+                        i.IsDiscount,
+                        i.Quantity,
+                        i.Id
+                    )
+                ).ToList();
+
+                var order = new OrderAggregate(new BuyerId(Guid.Parse(userId)), address, DateTime.UtcNow, description, OrderStatus.Submitted, orderItems);
+                await _orderRepository.AddAsync(order);
+                await _unitOfWork.CommitAsync();
+            }
+            catch
+            {
+                await _unitOfWork.RollbackAsync();
+                throw;
+            }
         }
     }
 }

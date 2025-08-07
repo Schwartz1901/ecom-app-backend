@@ -23,7 +23,7 @@ namespace Order.Infrastructure.Repositories
                 .Include(o => o.OrderItems)
                 .FirstOrDefaultAsync(o => o.Id == id);
         }
-    
+        
        
     }
 }

@@ -9,5 +9,7 @@ namespace Order.API.Interfaces
         Task AddAsync(OrderDto orderDto);
         Task UpdateAsync(OrderDto orderDto);
         Task DeleteAsync(Guid id);
+
+        Task CheckoutAsync(string userId, AddressDto addressDto, string description);
     }
 }
