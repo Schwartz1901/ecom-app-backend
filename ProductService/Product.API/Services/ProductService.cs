@@ -1,4 +1,5 @@
-﻿using Product.API.DTOs;
+﻿using Azure.Storage.Blobs;
+using Product.API.DTOs;
 using Product.API.Interfaces;
 using Product.Domain.Aggregates;
 using Product.Domain.Aggregates.ValueObjects;
@@ -10,12 +11,13 @@ namespace Product.API.Services
     public class ProductService : IProductService
     {
         private readonly IProductRepository _productRepository;
-        
+        private readonly BlobServiceClient _blobServiceClient;
 
 
-        public ProductService(IProductRepository productRepository)
+        public ProductService(IProductRepository productRepository, BlobServiceClient blobServiceClient)
         {
             _productRepository = productRepository;
+            _blobServiceClient = blobServiceClient;
         }
 
         public async Task<ProductDto> GetByIdAsync(Guid id)
@@ -40,11 +42,9 @@ namespace Product.API.Services
                 ImageAlt = product.Image.ImageAlt,
                 Categories = product.Categories.Select(c => c.Name).ToList()
 
-
             };
 
-           
-
+       
             return productDto;
         }
 

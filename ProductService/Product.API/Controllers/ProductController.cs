@@ -9,9 +9,11 @@ namespace Product.API.Controllers
     public class ProductController : Controller
     {
         private readonly IProductService _productService;
-        public ProductController(IProductService productService)
+        private readonly IImageService _imageService;
+        public ProductController(IProductService productService, IImageService imageService)
         {
             _productService = productService;
+            _imageService = imageService;
         }
 
         [HttpGet("hello")]
@@ -75,6 +77,18 @@ namespace Product.API.Controllers
                 return BadRequest(new { message = ex.Message });
             }
         }
-        
+        [HttpPost("image")]
+        public async Task<IActionResult> Upload(IFormFile file)
+        {
+            try
+            {
+                var result = await _imageService.UploadAsync(file);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new {message = ex.Message});
+            }
+        }
     }
 }
