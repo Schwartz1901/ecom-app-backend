@@ -13,4 +13,17 @@
 
         public List<string> Categories { get; set; } = new();
     }
+
+    public class AddProductDto
+    {
+        public Guid? Id { get; set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public IFormFile Image { get; set; }
+        public double Price { get; set; }
+        public double DiscountPrice { get; set; }
+        public bool IsDiscount { get; set; }
+
+        public List<string> Categories { get; set; } = new();
+    }
 }

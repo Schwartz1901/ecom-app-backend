@@ -6,7 +6,7 @@ namespace Product.API.Interfaces
     {
         Task<ProductDto> GetByIdAsync(Guid Id);
         Task<List<ProductDto>> GetAllAsync();
-        Task AddAsync(ProductDto productDto);
+        Task AddAsync(AddProductDto productDto);
         Task DeleteAsync(Guid Id);
     }
 }

@@ -9,8 +9,8 @@ namespace Product.API.Controllers
     public class ProductController : Controller
     {
         private readonly IProductService _productService;
-        private readonly IImageService _imageService;
-        public ProductController(IProductService productService, IImageService imageService)
+        private readonly IBlobService _imageService;
+        public ProductController(IProductService productService, IBlobService imageService)
         {
             _productService = productService;
             _imageService = imageService;
@@ -51,7 +51,7 @@ namespace Product.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Add([FromBody]ProductDto productDto)
+        public async Task<IActionResult> Add([FromForm]AddProductDto productDto)
         {
             try
             {
@@ -70,7 +70,7 @@ namespace Product.API.Controllers
             try
             {
                 await _productService.DeleteAsync(id);
-                return Ok("Deleted");
+                return NoContent();
             }
             catch (Exception ex)
             {

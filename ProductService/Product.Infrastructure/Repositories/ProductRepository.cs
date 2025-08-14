@@ -40,10 +40,7 @@ namespace Product.Infrastructure.Repositories
         {
             
             _dbContext.Add(product);
-            //foreach (var category in product.Categories)
-            //{
-            //    _dbContext.Attach(category); // Tell EF this is an existing entity
-            //}
+            
             await _dbContext.SaveChangesAsync();
 
         }

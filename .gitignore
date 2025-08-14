@@ -9,6 +9,8 @@ obj/
 *.cache
 *.log
 *.db
+appsettings.json
+appsettings.*.json
 
 ########################################
 # Visual Studio / VS Code

@@ -20,26 +20,17 @@ builder.Services.AddOpenApi();
 var connectionString = builder.Configuration.GetConnectionString("LocalDatabase");
 var blobStorageString = builder.Configuration.GetConnectionString("AzureBlobStorage");
 builder.Services.AddDbContext<ProductDbContext>(options => options.UseSqlServer(connectionString));
-builder.Services.AddAzureClients(azureBuilder =>
-{
-    azureBuilder.AddBlobServiceClient(blobStorageString);
-    
-});
-builder.Services.AddSingleton(sp =>
+
+var blobCfg = builder.Configuration.GetSection("AzureBlob");
+builder.Services.AddSingleton(new BlobServiceClient(blobCfg["ConnectionString"]!));
+builder.Services.AddScoped<IBlobService, BlobService>(sp =>
 {
     var svc = sp.GetRequiredService<BlobServiceClient>();
-    var cfg = sp.GetRequiredService<IConfiguration>();
-    var containerName = cfg["Storage:Container"] ?? "thao";
-    var container = svc.GetBlobContainerClient(containerName);
-
-    // Create once at startup (remove if container is provisioned by IaC)
-    container.CreateIfNotExists(); // or CreateIfNotExists(PublicAccessType.Blob) if you want public reads
-
-    return container;
+    var container = blobCfg["Container"]!;
+    return new BlobService(svc, container);
 });
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
-builder.Services.AddScoped<IImageService, ImageService>();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("Angular", policy =>
