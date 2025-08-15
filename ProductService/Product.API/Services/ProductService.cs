@@ -1,8 +1,9 @@
-﻿using Azure.Storage.Blobs.Models;
-using Azure.Storage.Blobs;
+﻿using Azure.Storage.Blobs;
+using Azure.Storage.Blobs.Models;
 using Product.API.DTOs;
 using Product.API.Interfaces;
 using Product.Domain.Aggregates;
+using Product.Domain.Aggregates.Enumerations;
 using Product.Domain.Aggregates.ValueObjects;
 using Product.Domain.Repositories;
 using Product.Domain.SeedWork;
@@ -111,6 +112,34 @@ namespace Product.API.Services
 
         }
 
+        public async Task UpdateAsync(Guid id, UpdateProductDto dto)
+        {
+            var productId = new ProductId(id);
+            var product = await _productRepository.GetByIdAsync(productId);
+            if (product is null)
+            {
+                throw new Exception("Product not found");
+            }
+            if (dto.Image is not null)
+            {
+                var deleted = await _blobService.DeleteAsync(product.Image.ImageAlt);
+                var alt = await _blobService.UploadAsync(dto.Image);
+                var url = _blobService.GetPublicUri(alt);
+                product.SetImage(new Image(url.ToString(), alt));
+            }
+            product.UpdateName(dto.Name);
+            product.UpdateDescription(dto.Description);
+            product.UpdatePrice(new Price(dto.Price, dto.DiscountPrice, dto.IsDiscount));
+
+            // categories: rebuild value object list
+            //var categoryList = dto.Categories
+            //    .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+            //    .Select(c => new Category(c))
+            //    .ToList();
+            //product.SetCategories(categoryList);
+
+            await _productRepository.UpdateAsync(product);
+        }
         public async Task DeleteAsync(Guid id)
         {
             var productId = new ProductId(id);

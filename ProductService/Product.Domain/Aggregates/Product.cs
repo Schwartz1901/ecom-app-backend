@@ -53,7 +53,14 @@ namespace Product.Domain.Aggregates
 
         }
 
-       
+        public void UpdateName(string name) => Name = name;
+        public void UpdateDescription(string description) => Description = description;
+        public void UpdatePrice(Price price) => Price = price;
+        public void SetImage(Image image) => Image = image;
+    
+        public void SetCategories(List<Category> categories) => Categories = categories;
+
+
 
     }
 }

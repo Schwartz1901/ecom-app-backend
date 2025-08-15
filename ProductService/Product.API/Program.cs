@@ -18,7 +18,7 @@ builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 
 var connectionString = builder.Configuration.GetConnectionString("LocalDatabase");
-var blobStorageString = builder.Configuration.GetConnectionString("AzureBlobStorage");
+
 builder.Services.AddDbContext<ProductDbContext>(options => options.UseSqlServer(connectionString));
 
 var blobCfg = builder.Configuration.GetSection("AzureBlob");

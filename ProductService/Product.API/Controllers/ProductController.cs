@@ -63,7 +63,19 @@ namespace Product.API.Controllers
                 return BadRequest(new { message = ex.Message });
             }
         }
-
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Update([FromRoute] Guid id, UpdateProductDto productDto)
+        {
+            try
+            {
+                await _productService.UpdateAsync(id, productDto);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete([FromRoute] Guid id)
         {
