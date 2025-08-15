@@ -78,6 +78,30 @@ namespace Order.API.Services
 
             return orderDtos;
         }
+        public async Task<List<OrderDto>> GetHistoryAsync(string id)
+        {
+            var buyerId = new BuyerId(Guid.Parse(id));
+            var history = await _orderRepository.GetListByBuyerIdAsync(buyerId);
+            var results = history.Select(result => new OrderDto
+            { 
+                OrderStatus = result.OrderStatus.ToString(),
+                Description = result.Description,
+                OrderDate = result.OrderDate,
+                OrderItems = result.OrderItems.Select(i => new OrderItemDto
+                {
+                    ProductId = i.ProductId,
+                    Quantity = i.Quantity,
+                    ImageAlt = i.ImageAlt,
+                    ImageUrl = i.ImageUrl,
+                    UnitPrice = i.GetUnitPrice(),
+                    Total = i.GetTotalPrice()
+                }).ToList(),
+                Total = result.GetTotal()
+            }
+            ).ToList();
+
+            return results;
+        }
         public Task AddAsync(OrderDto orderDto)
         {
             throw new NotImplementedException();

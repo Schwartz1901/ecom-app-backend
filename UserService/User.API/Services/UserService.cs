@@ -96,7 +96,21 @@ namespace User.API.Services
             }
         }
 
-        
-
+        public async Task<UserDto?> GetByAuthIdAsync(string aid)
+        {
+            var profile = await _userRepository.GetByAuthIdAsync(Guid.Parse(aid));
+            if (profile == null) {
+                throw new KeyNotFoundException("No user");
+            }
+            var userDto = new UserDto()
+            {
+                Username = profile.Username,
+                Email = profile.Email,
+                CreatedAt = profile.CreatedAt,
+                IsActive = profile.IsActive,
+                PhoneNumber = profile.PhoneNumber,
+            };
+            return userDto;
+        }
     }
 }

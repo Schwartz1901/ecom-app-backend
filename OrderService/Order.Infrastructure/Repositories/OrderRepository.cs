@@ -24,6 +24,14 @@ namespace Order.Infrastructure.Repositories
                 .FirstOrDefaultAsync(o => o.Id == id);
         }
         
+        public async Task<List<OrderAggregate>> GetListByBuyerIdAsync(BuyerId bid)
+        {
+            var results = await _dbSet
+                .Where(o => o.BuyerId.Value == bid.Value)
+                .Include(o => o.OrderItems)
+                .ToListAsync();
+            return results;
+        }
        
     }
 }

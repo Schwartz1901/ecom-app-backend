@@ -12,5 +12,6 @@ namespace User.Domain.Repositories
     public interface IUserRepository : IRepository<UserAggregate, UserId>
     {
         Task CreateUserAsync(UserAggregate user);
+        Task<UserAggregate?> GetByAuthIdAsync(Guid id);
     }
 }

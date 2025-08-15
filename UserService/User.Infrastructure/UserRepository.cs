@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,6 +21,12 @@ namespace User.Infrastructure
             await _dbSet.AddAsync(user);
             
            
+        }
+
+        public async Task<UserAggregate?> GetByAuthIdAsync(Guid id)
+        {
+            var profile = await _dbSet.FirstOrDefaultAsync(x => x.AuthId == id);
+            return profile;
         }
     }
 }

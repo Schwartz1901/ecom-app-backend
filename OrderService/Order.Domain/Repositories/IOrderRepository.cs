@@ -12,6 +12,6 @@ namespace Order.Domain.Repositories
 {
     public interface IOrderRepository: IRepository<OrderAggregate, OrderId>
     {
-        
+        Task<List<OrderAggregate>> GetListByBuyerIdAsync(BuyerId bid);
     }
 }

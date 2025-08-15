@@ -21,23 +21,46 @@ namespace User.API.Controllers
         {
             return Ok("Hello From User");
         }
+        //[Authorize]
+        //[HttpGet("{id}")]
+        //public async Task<IActionResult> GetById([FromRoute] Guid id)
+        //{
+        //    var aid = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        //    var username = User.FindFirst("username")?.Value;
+        //    var email = User.FindFirst(ClaimTypes.Email)?.Value;
+        //    try
+        //    {
+        //        var user = await _userService.GetByIdAsync(id, aid, username, email);
+        //        return Ok(user);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return BadRequest(new { message = ex.Message });
+        //    }
+        //}
         [Authorize]
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetById([FromRoute] Guid id)
+        [HttpGet("profile")]
+        public async Task<IActionResult> GetProfile()
         {
-            var aid = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var username = User.FindFirst("username")?.Value;
-            var email = User.FindFirst(ClaimTypes.Email)?.Value;
+
+            var id = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (id == null)
+            {
+                return Unauthorized();
+            }
             try
             {
-                var user = await _userService.GetByIdAsync(id, aid, username, email);
-                return Ok(user);
+
+                var profile = await _userService.GetByAuthIdAsync(id);
+
+                return Ok(profile);
             }
             catch (Exception ex)
             {
                 return BadRequest(new { message = ex.Message });
             }
         }
+
         [HttpPost]
         public async Task<IActionResult> CreateUser([FromBody] CreateUserRequestDto request)
         {

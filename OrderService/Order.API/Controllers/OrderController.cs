@@ -30,6 +30,26 @@ namespace Order.API.Controllers
         }
 
         [Authorize]
+        [HttpGet("history")]
+        public async Task<IActionResult> GetOrderHistory()
+        {
+            var id = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (id == null)
+            {
+                return Unauthorized();
+            }
+            try
+            {
+
+                var results = await _orderService.GetHistoryAsync(id);
+                return Ok(results);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+        [Authorize]
         [HttpPost("checkout")]
         public async Task<IActionResult> Checkout([FromBody]CheckoutDto dto)
         {
