@@ -11,7 +11,7 @@ namespace Order.API.Interfaces
         Task UpdateAsync(OrderDto orderDto);
         Task DeleteAsync(Guid id);
 
-        Task CheckoutAsync(string userId, AddressDto addressDto, string description);
+        Task CheckoutAsync(string userId, AddressDto addressDto, string description, string name);
 
         
     }

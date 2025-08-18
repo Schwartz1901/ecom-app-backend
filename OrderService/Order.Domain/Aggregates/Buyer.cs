@@ -13,5 +13,13 @@ namespace Order.Domain.Aggregates
         public BuyerId Id { get; private set; }
         public Address Address { get; private set; }
         public string Name { get; private set; } = string.Empty;
+
+        private Buyer() { }
+        public Buyer(BuyerId id, Address address, string name)
+        {
+            Id = id;
+            Address = address;
+            Name = name;
+        }
     }
 }

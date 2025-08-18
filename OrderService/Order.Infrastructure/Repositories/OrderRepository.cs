@@ -27,7 +27,7 @@ namespace Order.Infrastructure.Repositories
         public async Task<List<OrderAggregate>> GetListByBuyerIdAsync(BuyerId bid)
         {
             var results = await _dbSet
-                .Where(o => o.BuyerId.Value == bid.Value)
+                .Where(o => o.BuyerId == bid)
                 .Include(o => o.OrderItems)
                 .ToListAsync();
             return results;

@@ -14,6 +14,7 @@ namespace Order.API.Services
     public class OrderService : IOrderService
     {
         private readonly IOrderRepository _orderRepository;
+        private readonly IBuyerRepository _buyerRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly IHttpContextAccessor _httpContextAccessor;
@@ -21,13 +22,15 @@ namespace Order.API.Services
             IOrderRepository orderRepository, 
             IUnitOfWork unitOfWork, 
             IHttpClientFactory httpClientFactory,
-            IHttpContextAccessor httpContextAccessor
+            IHttpContextAccessor httpContextAccessor,
+            IBuyerRepository buyerRepository
             ) 
         {
             _orderRepository = orderRepository;
             _unitOfWork = unitOfWork;
             _httpClientFactory = httpClientFactory;
             _httpContextAccessor = httpContextAccessor;
+            _buyerRepository = buyerRepository;
         }
         public async Task<OrderDto> GetByIdAsync(Guid id)
         {
@@ -84,7 +87,8 @@ namespace Order.API.Services
             var history = await _orderRepository.GetListByBuyerIdAsync(buyerId);
             var results = history.Select(result => new OrderDto
             { 
-                OrderStatus = result.OrderStatus.ToString(),
+                Id = result.Id.ToString(),
+                OrderStatus = result.OrderStatus.Name,
                 Description = result.Description,
                 OrderDate = result.OrderDate,
                 OrderItems = result.OrderItems.Select(i => new OrderItemDto
@@ -98,7 +102,9 @@ namespace Order.API.Services
                 }).ToList(),
                 Total = result.GetTotal()
             }
-            ).ToList();
+            ).OrderBy(r => OrderStatus.FromName(r.OrderStatus).Id)
+                .ThenByDescending(r => r.OrderDate)
+                .ToList();
 
             return results;
         }
@@ -118,7 +124,7 @@ namespace Order.API.Services
 
         }
 
-        public async Task CheckoutAsync(string userId, AddressDto addressDto, string description)
+        public async Task CheckoutAsync(string userId, AddressDto addressDto, string description, string name)
         {
             var cartClient = _httpClientFactory.CreateClient("CartService");
             var request = new HttpRequestMessage(HttpMethod.Get, "/api/Cart");
@@ -158,9 +164,11 @@ namespace Order.API.Services
                         i.Id
                     )
                 ).ToList();
-
-                var order = new OrderAggregate(new BuyerId(Guid.Parse(userId)), address, DateTime.UtcNow, description, OrderStatus.Submitted, orderItems);
+                var buyerId = new BuyerId(Guid.Parse(userId));
+                var order = new OrderAggregate(buyerId, address, DateTime.UtcNow, description, OrderStatus.Submitted, orderItems);
+                var buyer = new Buyer(buyerId, address, name);
                 await _orderRepository.AddAsync(order);
+                await _buyerRepository.AddAsync(buyer);
                 await _unitOfWork.CommitAsync();
             }
             catch

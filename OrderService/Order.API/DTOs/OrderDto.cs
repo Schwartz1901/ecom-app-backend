@@ -1,7 +1,7 @@
 ﻿namespace Order.API.DTOs;
 public class OrderDto
 {
-
+    public string Id { get; set; }
     public string OrderStatus { get; set; }
     public string Description { get; set; }
     public DateTime OrderDate { get; set; }

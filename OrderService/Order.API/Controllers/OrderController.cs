@@ -46,6 +46,7 @@ namespace Order.API.Controllers
             }
             catch (Exception ex)
             {
+                Console.WriteLine(ex.Message);
                 return BadRequest(new { message = ex.Message });
             }
         }
@@ -57,7 +58,7 @@ namespace Order.API.Controllers
             if (userId == null) return Unauthorized();
             try
             {
-                await _orderService.CheckoutAsync(userId, dto.Address, dto.Description);
+                await _orderService.CheckoutAsync(userId, dto.Address, dto.Description, dto.Recipient);
                 return Ok();
             }
             catch (Exception ex)

@@ -20,6 +20,7 @@ builder.Services.AddHttpClient("CartService", client =>
 var connectionString = builder.Configuration.GetConnectionString("LocalDatabase");
 builder.Services.AddDbContext<OrderDbContext>(options => options.UseSqlServer(connectionString));
 
+builder.Services.AddScoped<IBuyerRepository, BuyerRepository>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IUnitOfWork, EfUnitOfWork>();
 builder.Services.AddScoped<IOrderService, OrderService>();

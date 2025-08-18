@@ -35,8 +35,13 @@ namespace Order.Infrastructure.Data
                     value => new BuyerId(value)
                 ).HasColumnName("Buyer_Id").IsRequired();
 
-                builder.Property("_orderStatusId").HasColumnName("Order_Status_Id").IsRequired();
-                builder.Ignore(o => o.OrderStatus);
+                builder.Property(o => o.OrderStatus).HasConversion(
+                        os => os.Id,
+                        v => OrderStatus.From(v)
+                        )
+                .HasColumnName("Order_Status_Id")
+                .IsRequired();
+             
 
                 builder.Property(o => o.OrderDate).HasColumnName("Order_Date").IsRequired();
                 builder.Property(o => o.Description).HasColumnName("Description");

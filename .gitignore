@@ -11,6 +11,8 @@ obj/
 *.db
 appsettings.json
 appsettings.*.json
+**/appsettings.json
+**/appsettings.Development.json
 
 ########################################
 # Visual Studio / VS Code
